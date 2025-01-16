@@ -31,6 +31,7 @@
                                 @endforeach
                             </select>
                         </div>
+                        <input type="text" class="form-control" name="department_id" id="department_id_id" hidden>
                         <div class="col-md-2 mb-3">
                             <label for="campus_id" class="form-label">Campus</label>
                             <select name="campus_id" id="select_campus_id" class="form-select " required>
@@ -79,6 +80,10 @@
                         <div class="col-md-2 mb-3">
                             <label>Other Fee</label>
                             <h5>Total: <input id="total_other_fees"></input></h5>
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            <label>Previous Balance</label>
+                            <h5>Total: <input type="text" id="previous_balance" name="previousBalance"></input></h5>
                         </div>
                         {{-- <div class="col-md-2 mb-3">
                             <label>Discount</label>
@@ -188,13 +193,14 @@
 @push('scripts')
     <script>
         var semesterValue;
+        var departmentValue;
 
         function studentAss(id, id_number, first_name, middle_name, last_name, code, campus_id, year_level, semester,
-            school_year) {
+            school_year, department_id) {
 
-            //kungg meron siyang middle name MERON kung wala wala
             semesterValue = semester;
-            // console.log(semesterValue);
+            departmentValue = department_id;
+
             var fullName = first_name + ' ' + (middle_name ? middle_name + ' ' : '') + last_name;
             $('#student_assessment').val(id);
             $('#student_name').html(fullName);
@@ -203,6 +209,8 @@
             $('#select_campus_id').val(campus_id);
             $('#year_level_id').val(year_level);
             $('#semester_id_id').val(semester);
+            $('#department_id_id').val(semester);
+
             // $('#select_school_year').val(school_year);
 
             var table = $('#createaccount-table').DataTable();
@@ -288,14 +296,21 @@
                         d.student_id = $('#id_numbers').val();
                         d.course_id = $('#course_id_id').val();
                         d.semester = $('#semester_id_id').val();
+                        d.id_number = $('#id_numbers').val();
                         return JSON.stringify(d);
                     },
                     dataSrc: function(response) {
-                        $('#total_assessment').val(response.total.toFixed(2));
-                        $('#edit_total_assessment').val(response.total.toFixed(2));
-                        $('#edit_totalAss').val(response.total.toFixed(2));
+                        const previousAssessment = parseFloat(response.previousAssessment) || 0;
 
-                        const breakdown = (+response.total / 5).toFixed(2);
+                        // Update total assessment by adding previousAssessment
+                        const newTotal = parseFloat(response.total) + previousAssessment;
+
+                        $('#total_assessment').val(newTotal.toFixed(2));
+                        $('#edit_total_assessment').val(newTotal.toFixed(2));
+                        $('#edit_totalAss').val(newTotal.toFixed(2));
+
+                        // Update breakdowns
+                        const breakdown = (newTotal / 5).toFixed(2);
                         $('#down_payment').val(breakdown);
                         $('#edit_sdownpayment').val(breakdown);
                         $('#prelims').val(breakdown);
@@ -307,19 +322,32 @@
                         $('#finals').val(breakdown);
                         $('#edit_finals').val(breakdown);
 
+                        // Set specific fees and previous balance
                         $('#total_tuition_fees').val(response.total_tuition_fees.toFixed(2));
                         $('#total_misc_fees').val(response.total_misc_fee.toFixed(2));
                         $('#total_other_fees').val(response.total_other_fees.toFixed(2));
                         $('#total_laboratory_fees').val(response.total_laboratory_fees.toFixed(2));
+                        $('#previous_balance').val(previousAssessment.toFixed(2));
 
-                        //delete 0 response
+                        // Optional: Add previous assessment as a row in the table
+                        if (previousAssessment > 0) {
+                            response.data.unshift({
+                                category: "Previous Balance",
+                                fee_type: "N/A",
+                                amount: previousAssessment.toFixed(2),
+                                lecture_units: "1",
+                                computation: previousAssessment.toFixed(2),
+                            });
+                        }
+
+                        // Filter and return data
                         response.data = response.data.filter(function(row) {
                             return parseFloat(row.amount) !== 0 && parseFloat(row
                                 .computation) !== 0;
                         });
 
                         return response.data;
-                    }
+                    },
                 },
                 columns: [{
                         data: 'category',
@@ -334,7 +362,7 @@
                         name: 'amount',
                         render: function(data) {
                             return parseFloat(data).toFixed(2);
-                        }
+                        },
                     },
                     {
                         data: 'lecture_units',
@@ -345,20 +373,18 @@
                         name: 'computation',
                         render: function(data) {
                             return parseFloat(data).toFixed(2);
-                        }
+                        },
                     },
-
                     {
                         data: null,
                         orderable: false,
                         searchable: false,
-                        render: function(data, type, row) {
+                        render: function() {
                             return '<button class="btn btn-danger btn-sm delete-btn" style="display: none;">Delete</button>';
-                        }
-                    }
-                ]
+                        },
+                    },
+                ],
             });
-
 
             function toggleDeleteButtons() {
                 const isCrossEnrollee = $('#cross_enrollee_id').val() === 'Cross Enrollee';
@@ -370,17 +396,14 @@
                 }
             }
 
-
             $('#select_school_year').on('change', function() {
                 dt.ajax.reload(); // Reload DataTable data
                 toggleDeleteButtons();
             });
 
-
             $('#cross_enrollee_id').on('change', function() {
                 toggleDeleteButtons();
             });
-
 
             toggleDeleteButtons();
 
@@ -394,28 +417,27 @@
                 row.remove().draw(false);
                 toastr.success('Row deleted successfully.');
 
+                let feeTypes = {
+                    "Laboratory Fees": "#total_laboratory_fees",
+                    "Miscellaneous Fee": "#total_misc_fees",
+                    "Other Fees": "#total_other_fees",
+                    "Tuition Fees": "#total_tuition_fees",
+                };
 
-                if (rowCategory === "Laboratory Fees") {
-                    let currentLabFee = parseFloat($('#total_laboratory_fees').val()) || 0;
-                    currentLabFee -= rowComputation;
-                    $('#total_laboratory_fees').val(currentLabFee.toFixed(2));
-                } else if (rowCategory === "Miscellaneous Fee") {
-                    let currentMiscFee = parseFloat($('#total_misc_fees').val()) || 0;
-                    currentMiscFee -= rowComputation;
-                    $('#total_misc_fees').val(currentMiscFee.toFixed(2));
-                } else if (rowCategory === "Other Fees") {
-                    let currentOtherFee = parseFloat($('#total_other_fees').val()) || 0;
-                    currentOtherFee -= rowComputation;
-                    $('#total_other_fees').val(currentOtherFee.toFixed(2));
-                } else if (rowCategory === "Tuition Fees") {
-                    let currentTuitionFee = parseFloat($('#total_tuition_fees').val()) || 0;
-                    currentTuitionFee -= rowComputation;
-                    $('#total_tuition_fees').val(currentTuitionFee.toFixed(2));
+                if (feeTypes[rowCategory]) {
+                    let currentFee = parseFloat($(feeTypes[rowCategory]).val()) || 0;
+                    currentFee -= rowComputation;
+                    $(feeTypes[rowCategory]).val(currentFee.toFixed(2));
                 }
 
+                // Include previousAssessment in recalculation
+                const previousAssessment = parseFloat($('#previous_balance').val()) || 0;
 
                 let totalAssessment = parseFloat($('#total_assessment').val()) || 0;
                 totalAssessment -= rowComputation;
+
+                // Add back previousAssessment to total
+                totalAssessment = Math.max(totalAssessment + previousAssessment, 0);
                 $('#total_assessment').val(totalAssessment.toFixed(2));
 
                 const newBreakdown = (totalAssessment / 5).toFixed(2);

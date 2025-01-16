@@ -399,9 +399,11 @@ class SectionController extends Controller
 
                     $addDetails = '<a href="#">';
                     $addDetails .= '<button type="button" class="btn btn-primary waves-effect waves-light OpenModal" onclick="hasAction(' . $query->id . ',\'' . $query->time . '\', \'' . $query->room . '\', \'' . $query->day . '\', \'' . $query->instructor_id . '\', 
-                    \'' . $query->section_id . '\', \'' . $query->subject_id . '\', \'' . $query?->adddetails?->id . '\')">';
-                    $addDetails .= '+/Edit';
+                    \'' . $query->section_id . '\', \'' . $query->subject_id . '\', \'' . $query?->adddetails?->id . '\',\'' . $query->id . '\')">';
+                    $addDetails .= '+';
                     $addDetails .= '</button></a>';
+
+
 
                     $deleteBtn = '<form action="' . route('superadmin.delete.Subject', $query->id) . '" method="POST">';
                     $deleteBtn .= csrf_field();
@@ -440,7 +442,19 @@ class SectionController extends Controller
                     $addDetail = $query->adddetailss?->where('subject_id', $query->subject_id)
                         ->where('school_year', $school_year)
                         ->first();
-                    return $addDetail?->instructorss->full_name ?? '-';
+                    if ($addDetail) {
+
+                        if (is_numeric($addDetail->instructor_id)) {
+
+                            return $addDetail->instructorss?->full_name ?? '-';
+                        } else {
+
+                            return $addDetail->instructor_id;
+                        }
+                    }
+
+                    // Default value if no `addDetail` record found
+                    return '-';
                 })
                 ->addColumn('department', function ($query) {
                     return $query->latestDetailOfSubject?->instructorss?->department_id ?? '-';
@@ -690,7 +704,7 @@ class SectionController extends Controller
         // dd($request->school_year);
         if (request()->ajax()) {
             $sectionSubjects = section_subjectss::whereIn('school_year', $request->school_year)->get();
-
+            // dd($sectionSubjects);
 
             return datatables()->of($sectionSubjects)
                 ->addColumn('section', function ($query) {
@@ -707,7 +721,8 @@ class SectionController extends Controller
                     $addbtn = '<button type="button" id="addSubjectButton" class="btn btn-success" onclick="addSubject2( ' . $query->subject_id . ', 
                     \'' . $query->code . '\', \'' . $query->descriptive_tittle . '\', \'' . $query->total_units . '\', 
                     \'' . $query->lecture_units . '\', \'' . $query->lab_units . '\', \'' . $query->pre_requisite . '\', 
-                    \'' . $query->total_hrs_per_week . '\', \'' . $query->time . '\', \'' . $query->day . '\', \'' . $query->room . '\', \'' . $query->lab_id . '\', \'' . $query->instructor?->full_name . '\')">+</button>';
+                    \'' . $query->total_hrs_per_week . '\', \'' . $query->time . '\', \'' . $query->day . '\', \'' . $query->room . '\', \'' . $query->lab_id . '\', \'' . $query->instructor?->full_name . '\',
+                    \'' . $query->id . '\')">+</button>';
 
                     return $addbtn;
                 })

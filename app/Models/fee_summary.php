@@ -21,7 +21,18 @@ class fee_summary extends Model
         'excess',
         'downpayment2',
         'type',
-        'school_year'
+        'school_year',
+        'department_id',
+        'role_name_id',
+        'campus_id',
+        'discount_type',
+        'discount_code',
+        'reason/remarks',
+        'discount_id',
+        'payment_status',
+        'check_no',
+
+
 
     ];
     public function create_account()
@@ -47,5 +58,21 @@ class fee_summary extends Model
     public function fee_summary()
     {
         return $this->belongsTo(fee_summary::class, 'id_number', 'id_number');
+    }
+    public function schoolYear()
+    {
+        return $this->belongsTo(SchoolYear::class, 'school_year', 'id');
+    }
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'department_id', 'id');
+    }
+    public function campus()
+    {
+        return $this->belongsTo(Campus::class, 'campus_id', 'id');
+    }
+    public function discount1()
+    {
+        return $this->belongsTo(Discount::class, 'discount_id', 'id');
     }
 }

@@ -109,6 +109,11 @@
     .hidden-row {
         display: none;
     }
+
+    .testing {
+
+        left: 100px;
+    }
 </style>
 
 <body>
@@ -147,7 +152,6 @@
                 <th>Subject Code</th>
                 <th>Subject Description</th>
                 <th>Units</th>
-
                 <th>Lab</th>
                 <th>Schedule</th>
                 <th>Instructor</th>
@@ -197,16 +201,12 @@
                 @endforeach
             @endforeach
             <br>
-            <tr class="border-bottom">
-                <td></td>
-                <td></td>
-                <td><b>Total Units: </b></td>
+            <tr class="testing">
+                <td colspan="2" style="text-align: right;"><b>Total Units: </b></td>
                 <td><b>{{ $studentData[0]['totalUnits'] }}</b></td>
                 <td><b>{{ $studentData[0]['totallabUnits'] }}</b></td>
-                <td><b></b></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td colspan="3"></td>
+
             </tr>
         </table>
         <br>
@@ -251,17 +251,20 @@
 
             <!-- Laboratory Fees Section -->
             <tr>
+                <!-- Display Laboratory Fees -->
                 <td style="vertical-align: top;">
                     Laboratory Fees<br>
                     @foreach ($studentData as $data)
                         @php
+                            // Parse and filter input data
                             $laboratories = array_values(array_filter(explode(', ', $data['laboratory'])));
                             $labUnits = array_values(array_filter(explode(', ', $data['labunits'])));
-                            $laboratoriesAmount = explode(', ', $data['laboratory_amount']);
+                            $laboratoriesAmount = array_values(array_filter(explode(', ', $data['laboratory_amount'])));
                         @endphp
+
                         @foreach ($laboratories as $index => $laboratory)
                             @if (!empty($laboratory) && isset($labUnits[$index]) && isset($laboratoriesAmount[$index]))
-                                <span style="margin-top: 0; margin-left: 20px;">
+                                <span style="margin-left: 20px;">
                                     {{ $laboratory }} {{ $labUnits[$index] }} x
                                     {{ number_format(floatval($laboratoriesAmount[$index]), 2) }} /unit
                                 </span><br>
@@ -269,31 +272,53 @@
                         @endforeach
                     @endforeach
                 </td>
+
+                <!-- Display Individual Laboratory Fee Calculations -->
                 <td>
+                    @php $totalLabFees = 0; @endphp
+
                     @foreach ($studentData as $data)
                         @php
-                            $laboratoriesAmount = explode(', ', $data['laboratory_amount']);
+                            $laboratoriesAmount = array_values(array_filter(explode(', ', $data['laboratory_amount'])));
+                            $labUnits = array_values(array_filter(explode(', ', $data['labunits'])));
                         @endphp
+
                         @foreach ($laboratoriesAmount as $index => $labAmount)
                             @if (isset($labUnits[$index]))
-                                {{ number_format(floatval($labAmount) * floatval($labUnits[$index]), 2) }}<br>
+                                @php
+                                    $currentLabFee = floatval($labAmount) * floatval($labUnits[$index]);
+                                    $totalLabFees += $currentLabFee;
+                                @endphp
+                                {{ number_format($currentLabFee, 2) }}<br>
                             @else
                                 {{ number_format(floatval($labAmount), 2) }} (No corresponding lab unit)<br>
                             @endif
                         @endforeach
                     @endforeach
+
+                    <!-- Display Total Laboratory Fees -->
+
                 </td>
+
+                <!-- Final Total for Laboratory Fees -->
                 <td style="vertical-align: bottom;">
-                    <?php
-                    $totallabFees = 0;
-                    foreach ($studentData as $data) {
-                        $labfeesamount = explode(', ', $data['laboratory_amount']);
-                        $totallabFees += array_sum($labfeesamount);
-                    }
-                    echo number_format($totallabFees, 2, '.', ',');
-                    ?>
+                    @php
+                        $grandTotalLabFees = 0;
+                        foreach ($studentData as $data) {
+                            $laboratoriesAmount = array_values(array_filter(explode(', ', $data['laboratory_amount'])));
+                            $labUnits = array_values(array_filter(explode(', ', $data['labunits'])));
+
+                            foreach ($laboratoriesAmount as $index => $labAmount) {
+                                if (isset($labUnits[$index])) {
+                                    $grandTotalLabFees += floatval($labAmount) * floatval($labUnits[$index]);
+                                }
+                            }
+                        }
+                    @endphp
+                    {{ number_format($grandTotalLabFees, 2) }}
                 </td>
             </tr>
+
 
             <!-- Miscellaneous Fees Section -->
             {{-- <tr>
@@ -446,6 +471,7 @@
                 $grandTotal += floatval($data['tuitionFees']);
             
                 $labAmounts = explode(', ', $data['laboratory_amount']);
+                // dd($labAmounts);
                 $labUnits = array_values(array_filter(explode(', ', $data['labunits'])));
                 foreach ($labAmounts as $index => $amount) {
                     if (isset($labUnits[$index])) {

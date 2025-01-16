@@ -19,19 +19,74 @@ class StudentInfo extends Controller
         $departments = Department::all();
         $campus = Campus::all();
         $courses = Course::all();
-        return view('frontend.admissionform', compact('courses', 'schoolyears', 'campus', 'departments'));
+        return view('enrollStudent', compact('courses', 'schoolyears', 'campus', 'departments'));
     }
     public function student(Request $request)
     {
-        // dd($request->all());
 
-        $request->validate(CreateAccount::$rules);
-        $createaccount = new CreateAccount([
-            ...$request->only([
-                'id_number', 'sy_enrolled', 'school_year', 'school_year', 'last_name', 'first_name', 'last_name', 'middle_name', 'gender', 'civil_status', 'date_of_birth', 'place_of_birth', 'nationality', 'religion', 'control_number', 'email', 'home_address', 'elementary', 'year_graduated_elem', 'junior_high_school', 'year_graduated_elem_jhs', 'senior_high_school', 'year_graduated_elem_shs', 'mothers_fullname', 'occupation_mother', 'contact_number_mother', 'fathers_fullname', 'occupation_father', 'contact_number_father', 'type_of_students', 'year_level', 'course_id', 'campus_id'
-            ])
-        ]);
+        // Validation rules
+        $rules = [
+            'id_number' => 'nullable',
+            'last_name' => 'required',
+            'first_name' => 'required',
+            'middle_name' => 'nullable',
+            'gender' => 'required',
+            'civil_status' => 'required',
+            'date_of_birth' => 'required',
+            'place_of_birth' => 'nullable',
+            'nationality' => 'nullable',
+            'religion' => 'nullable',
+            'control_number' => 'required',
+            'email' => 'required',
+            'home_address' => 'nullable',
+            'elementary' => 'nullable',
+            'year_graduated_elem' => 'nullable',
+            'junior_high_school' => 'nullable',
+            'year_graduated_elem_jhs' => 'nullable',
+            'senior_high_school' => 'nullable',
+            'year_graduated_elem_shs' => 'nullable',
+            'mothers_fullname' => 'nullable',
+            'occupation_mother' => 'nullable',
+            'contact_number_mother' => 'nullable',
+            'fathers_fullname' => 'nullable',
+            'occupation_father' => 'nullable',
+            'contact_number_father' => 'nullable',
+            'type_of_students' => 'required',
+            'course_id' => 'required',
+            'campus_id' => 'required',
+            'discount_id' => 'nullable',
+            'admission_date' => 'required',
+            'island' => 'nullable',
+            'municipality' => 'nullable',
+            'barangay' => 'nullable',
+            'extention' => 'nullable',
+            'municipality_code' => 'nullable',
+            'barangay_code' => 'nullable',
+            'streetname' => 'nullable',
+            'houseno' => 'nullable',
+            'regioncode' => 'nullable',
+            'regionname' => 'nullable',
+            'otherLives' => 'nullable',
+
+        ];
+
+        // Custom error messages (optional)
+        $messages = [
+            'id_number.required' => 'The ID number is required.',
+            'email.unique' => 'This email is already in use.',
+            'control_number.unique' => 'The control number must be unique.',
+            'date_of_birth.before' => 'The date of birth must be before today.',
+            // Add more messages as needed
+        ];
+
+        // Validate the request
+        $validatedData = $request->validate($rules, $messages);
+
+        // Create the account
+        $createaccount = new CreateAccount($validatedData);
         $createaccount->save();
+
+        // Set success message and redirect
         $request->session()->flash('success', 'Thank you for enrolling MNCP-ISAP');
         return redirect()->back();
     }

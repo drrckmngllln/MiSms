@@ -36,7 +36,6 @@ class ImportstudentList implements ToModel, WithHeadingRow
             'first_name' => $row['first_name'],
             'middle_name' => $row['middle_name'],
             'course_id' => is_numeric($row['course_id']) ? (int)$row['course_id'] : 0,
-            'curriculum_id' => is_numeric($row['curriculum_id']) ? (int)$row['curriculum_id'] : 0,
             'campus_id' => is_numeric($row['campus_id']) ? (int)$row['campus_id'] : 0,
             // 'admission_date' => $row['admission_date'],
             'admission_date' => $this->convertExcelDate($row['admission_date']),

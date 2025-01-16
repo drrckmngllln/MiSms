@@ -348,14 +348,14 @@
             @switch($campus)
                 @case(1)
                     <div class="logo">
-                        <img src="{{ asset('backend/assets/images/ISAP_LOGO_NO_BG.png') }}" width="75" height="75">
+                        <img src="{{ asset('backend/assets/images/Medical_Colleges_of_Northern_Philippines_(MCNP)_Logo.jpg') }}"
+                            width="75" height="75">
                     </div>
                 @break
 
                 @case(2)
                     <div class="logo">
-                        <img src="{{ asset('backend/assets/images/Medical_Colleges_of_Northern_Philippines_(MCNP)_Logo.jpg') }}"
-                            width="75" height="75">
+                        <img src="{{ asset('backend/assets/images/ISAP_LOGO_NO_BG.png') }}" width="75" height="75">
                     </div>
                 @break
 
@@ -367,16 +367,19 @@
 
                 @default
             @endswitch
+
+
+
             <div class="heads">
                 @switch($campus)
                     @case(1)
-                        <p>INTERNATIONAL SCHOOL OF ASIA AND THE PACIFIC</p>
+                        <p style="color:rgb(42, 42, 177);">MEDICAL COLLEGES OF NORTHERN PHILLIPINES</p>
                         <p class="address">Alimannao Hills, Peñablanca, Cagayan</p>
                         <p class="tele">Telefax No.: (078) 304-1010/846-7539</p>
                     @break
 
                     @case(2)
-                        <p style="color:rgb(42, 42, 177);">MEDICAL COLLEGES OF NORTHERN PHILLIPINES</p>
+                        <p>INTERNATIONAL SCHOOL OF ASIA AND THE PACIFIC</p>
                         <p class="address">Alimannao Hills, Peñablanca, Cagayan</p>
                         <p class="tele">Telefax No.: (078) 304-1010/846-7539</p>
                     @break
@@ -384,19 +387,11 @@
                     @default
                         <!-- Default content if needed -->
                 @endswitch
+
             </div>
             <div class="footerEmailAdd">
                 @switch($campus)
                     @case(1)
-                        <p class="web">
-                            <span class="webspan">Website:
-                                <u class="websiteurl">www.isap.edu.ph</u>
-                            </span>
-                            <span class="email">Email Address: <u>adminoffice@isap.edu.ph</u></span>
-                        </p>
-                    @break
-
-                    @case(2)
                         <p class="web">
                             <span class="webspan">Website:
                                 <u class="websiteurl">www.mcnp.edu.ph</u>
@@ -405,9 +400,17 @@
                         </p>
                     @break
 
+                    @case(2)
+                        <p class="web">
+                            <span class="webspan">Website:
+                                <u class="websiteurl">www.isap.edu.ph</u>
+                            </span>
+                            <span class="email">Email Address: <u>adminoffice@isap.edu.ph</u></span>
+                        </p>
+                    @break
+
                     @default
                 @endswitch
-
                 <p class="Boarder2"> ______________________________________________________________</p>
             </div>
         </div>
@@ -464,7 +467,7 @@
                     <tr>
                         <td>{{ $subject['code'] }}</td>
                         <td>{{ $subject['title'] }}</td>
-                        <td>{{ $data['grades'][$loop->index] ?? '' }}</td>
+                        <td>{{ $subject['grade'] }}</td>
                         <td></td>
                         <td>{{ $subject['units'] }}</td>
                     </tr>

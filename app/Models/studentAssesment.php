@@ -45,7 +45,9 @@ class studentAssesment extends Model
         'or_number',
         'lab_id',
         'miscfee_id',
-        'otherFees_id'
+        'otherFees_id',
+        'department_id',
+        'previousBalance',
 
 
     ];
@@ -92,5 +94,13 @@ class studentAssesment extends Model
     public function laboratory()
     {
         return $this->belongsTo(laboratoryModel::class, 'lab_id', 'id');
+    }
+    public function createAccount1()
+    {
+        return $this->belongsTo(createAccount::class, 'id_number', 'id_number');
+    }
+    public function schoolYear()
+    {
+        return $this->belongsTo(schoolYear::class, 'school_year', 'id');
     }
 }

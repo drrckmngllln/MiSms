@@ -532,7 +532,7 @@
 
                         if (Array.isArray(response) && response.length > 0) {
                             response.forEach(function(barangay) {
-                                console.log('Adding barangay:', barangay.name);
+
                                 barangaySelect.append(
                                     `<option value="${barangay.code}">${barangay.name}</option>`
                                 );
@@ -561,4 +561,5 @@
             });
         });
     </script>
+    <script></script>
 @endpush

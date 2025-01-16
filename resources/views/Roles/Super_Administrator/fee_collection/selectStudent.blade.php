@@ -82,11 +82,15 @@
         var idValue;
 
         function addSelectStudent(id, id_number, status, last_name, first_name, middle_name, code, year_level, semester,
-            downpayment, premils, midterms, semi_finals, finals, total_assessment, computation, campus_id) {
-            event.preventDefault();
-            totalAssessmentValue = computation;
-            idValue = id;
+            downpayment, premils, midterms, semi_finals, finals, total_assessment, computation, campus_id, school_year,
+            sdownpayment, sprelims, smidterms, ssemi_finals, sfinals, stotal_assessment, department_id, campus_id, course_id
+        ) {
 
+            // Original addSelectStudent content dito
+            // event.preventDefault();
+            totalAssessmentValue = computation;
+
+            idValue = id;
             $('#hahi').text(semester);
             $('#yahu').text(year_level);
             $('#holee').text(code);
@@ -99,18 +103,21 @@
             $('#campus_id_id').val(campus_id);
             $('#semester_ID_ID').val(semester);
             $('#year_level_ID_ID').val(year_level);
+            $('#dept_id').val(department_id);
+            $('#campus_id_ID').val(campus_id);
+            $('#course_id_id').val(course_id);
 
             filterFeesByCampus(campus_id);
 
             // console.log($('#fee-breakdown-table tbody tr:eq(4) td:eq(1)').text(finals));
 
             //throw the content of downpayment prelims ang other on other table
-            $('#fee-breakdown-table tbody tr:eq(0) td:eq(1)').text(downpayment);
-            $('#fee-breakdown-table tbody tr:eq(1) td:eq(1)').text(premils);
-            $('#fee-breakdown-table tbody tr:eq(2) td:eq(1)').text(midterms);
+            $('#fee-breakdown-table tbody tr:eq(0) td:eq(1)').text(sdownpayment);
+            $('#fee-breakdown-table tbody tr:eq(1) td:eq(1)').text(sprelims);
+            $('#fee-breakdown-table tbody tr:eq(2) td:eq(1)').text(smidterms);
             $('#fee-breakdown-table tbody tr:eq(3) td:eq(1)').text(semi_finals);
-            $('#fee-breakdown-table tbody tr:eq(4) td:eq(1)').text(finals);
-            $('#fee-breakdown-table tbody tr:eq(5) td:eq(1)').text(total_assessment);
+            $('#fee-breakdown-table tbody tr:eq(4) td:eq(1)').text(sfinals);
+            $('#fee-breakdown-table tbody tr:eq(5) td:eq(1)').text(stotal_assessment);
 
             $('#assesment-Breakdownsss').DataTable().destroy();
             $('#assesment-Breakdownsss').DataTable({
@@ -134,6 +141,44 @@
                     {
                         data: 'category',
                         name: 'category'
+                    },
+                ],
+            });
+
+            $('#live-breakdown').DataTable().destroy();
+            $('#live-breakdown').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: '/superadmin/getNewBreakDown/' + id_number,
+                    type: 'GET',
+                },
+                data: {
+                    id_number: id_number,
+                },
+                columns: [{
+                        data: 'downpayment',
+                        name: 'downpayment'
+                    },
+                    {
+                        data: 'prelims',
+                        name: 'prelims'
+                    },
+                    {
+                        data: 'midterms',
+                        name: 'midterms'
+                    },
+                    {
+                        data: 'semi_finals',
+                        name: 'semi_finals'
+                    },
+                    {
+                        data: 'finals',
+                        name: 'finals'
+                    },
+                    {
+                        data: 'total_assessment',
+                        name: 'total_assessment'
                     },
                 ],
             });
@@ -228,6 +273,10 @@
             }
             // Update the payable input field
             $('#payable_id').val(payableAmount.toFixed(2));
+            $('#paymenthidden_id2').val(payableAmount.toFixed(2));
+            $('#downpayment_2').val(payableAmount.toFixed(2));
+
+
             // console.log(finals);
 
             //
@@ -252,6 +301,14 @@
             // Reset the selected option
             feesSelect.selectedIndex = 0;
         }
+
+
+        // function addSelectStudent(id, id_number, status, last_name, first_name, middle_name, code, year_level, semester,
+        //     downpayment, premils, midterms, semi_finals, finals, total_assessment, computation, campus_id, school_year,
+        //     sdownpayment, sprelims, smidterms, ssemi_finals, sfinals, stotal_assessment, department_id, campus_id, course_id
+        // ) {
+
+        // }
     </script>
     <script></script>
 @endpush

@@ -33,7 +33,7 @@ class CreateAccountDataTable extends DataTable
 
                 $btncontainer = '<div class="d-flex justify-content-center">';
 
-                $studentIntersession = '<a href="#" data-bs-toggle="modal" data-bs-target="#interSession" onclick="Intersession(' . $query->id . ')">';
+                $studentIntersession = '<a href="#" data-bs-toggle="modal" data-bs-target="#interSession" onclick="Intersession(' . $query->id . ',\'' . $query->id_number . '\')">';
                 $studentIntersession .= '<button type="button" class="btn btn-primary waves-effect waves-light mx-1">Promote</button></a>';
 
                 $deleteBtn = '<form action="' . route('superadmin.create_account.destroy', $query->id) . '" method="POST">';
@@ -70,7 +70,8 @@ class CreateAccountDataTable extends DataTable
 
 
                 $accBtn = '<a href="#" data-bs-toggle="modal" data-bs-target="#accountingModal" ' .
-                    'onclick="studentAss(' . $query->id . ', \'' . $query->id_number . '\',\'' . $query->first_name . '\', \'' . $query->middle_name . '\',  \'' . $query->last_name . '\',\'' . $query->course_id . '\',\'' . $query->campus_id . '\', \'' . $query?->studentSubjectss?->year_level . '\',\'' . $query?->studentSubjectss?->semester . '\',\'' . $query->school_year . '\')">';
+                    'onclick="studentAss(' . $query->id . ', \'' . $query->id_number . '\',\'' . $query->first_name . '\', \'' . $query->middle_name . '\',  \'' . $query->last_name . '\',\'' . $query->course_id . '\',\'' . $query->campus_id . '\', \'' . $query?->studentSubjectss?->year_level . '\',
+                    \'' . $query?->studentSubjectss?->semester . '\',\'' . $query->school_year . '\',\'' . $query->studentSubjectss?->department_id . '\')">';
                 $accBtn .= '<button type="button" class="btn btn-success waves-effect waves-light mx-1">  Accounting</button></a>';
 
                 $viewSubBtn = '<a href="#" data-bs-toggle="modal" data-bs-target="#viewSubModal" ' .

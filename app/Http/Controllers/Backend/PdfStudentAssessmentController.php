@@ -35,7 +35,9 @@ class PdfStudentAssessmentController extends Controller
                     $query->where('semester', $latestSemester);
                 },
                 'studentSubjects.schoolYear',
-                'student_assestment',
+                'student_assestment' => function ($query) use ($latestSemester) {
+                    $query->where('semester', $latestSemester);
+                },
                 'fee_summary'
             ])->where('id_number', $request->id_number)
                 ->get();
@@ -68,10 +70,8 @@ class PdfStudentAssessmentController extends Controller
 
                 $instructors = [];
                 $laboratory_amount = [];
-
+                // dd($student->studentSubjects);
                 foreach ($student->studentSubjects as $subject) {
-                    // dd($subject);
-
                     $subjects[] = $subject->descriptive_tittle;
                     $subjectCode[] = $subject->code;
                     $units[] = $subject->lecture_units;
@@ -85,7 +85,8 @@ class PdfStudentAssessmentController extends Controller
                     $sectionIds[] = $sectionID;
 
                     if ($subject->adddetails->isNotEmpty()) {
-                        $instructors[] = $subject->adddetails->sortByDesc('created_at')->first()->instructorss->full_name;
+                        $instructors[] = $subject->adddetails->sortByDesc('created_at')->first()->instructorss?->full_name ?? 'TBA';
+
                         $time[] = $subject?->adddetails?->sortByDesc('created_at')->first()?->time;
                         $room[] = $subject?->adddetails?->sortByDesc('created_at')->first()?->room;
                     }
@@ -313,13 +314,10 @@ class PdfStudentAssessmentController extends Controller
                         ->pluck('total_miscfee_first_year')
                         ->filter()
                         ->first();
-                    $assessment  = $student->student_assestment->where('id_number', $student->id_number)
-                        ->where('semester', $latestSemester)
-                        ->orderBy('semester', 'desc')
-                        ->first();
-                    $totalDiscount = floatval($assessment->discountCompute ?? 0) + floatval($assessment->discountComputeMiscFee ?? 0);
 
-                    $discountCode = $assessment->discount?->code;
+                    $totalDiscount = floatval($student->student_assestment->discountCompute ?? 0) + floatval($student->student_assestment->discountComputeMiscFee ?? 0);
+
+                    $discountCode = $student->student_assestment?->code;
                     // dd($discountCode);
 
 
@@ -478,7 +476,7 @@ class PdfStudentAssessmentController extends Controller
 
                 if ($subject->adddetails->isNotEmpty()) {
                     // dd($subject->adddetails->first()->instructorss);
-                    $instructors[] = $subject->adddetails->first()->instructorss->full_name;
+                    $instructors[] = $subject?->adddetails->first()->instructorss?->full_name;
                     $time[] = $subject?->adddetails?->sortByDesc('created_at')->first()?->time;
                     $room[] = $subject?->adddetails?->sortByDesc('created_at')->first()?->room;
                     $day[] = $subject?->adddetails?->sortByDesc('created_at')->first()?->day;

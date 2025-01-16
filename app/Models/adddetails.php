@@ -18,7 +18,8 @@ class adddetails extends Model
         'email',
         'section_id',
         'semester',
-        'school_year'
+        'school_year',
+        'sectionSub_id',
 
     ];
     public static $rules = [

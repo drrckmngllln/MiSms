@@ -6,7 +6,7 @@
                    {{-- date and OR number --}}
                    @if (array_key_exists('or_number', $studentData) && array_key_exists('created_at', $studentData))
                        <p
-                           style="position: fixed; right: 200px; bottom: 290; font-family: Arial, sans-serif, monospace; font-size: 12px;">
+                           style="position: fixed; right: 200px; bottom: 290; font-family: Courier New, Courier, monospace; font-size: 12px;">
                            {{ $studentData['or_number'] }} <br> {{ $studentData['created_at'] }}
                        </p>
                    @endif
@@ -14,12 +14,12 @@
 
                    @if (isset($studentData['scholarship']) && $studentData['scholarship'] === 'true')
                        <p
-                           style="letter-spacing: 1px; margin-top: -80px; margin-left:60px; font-family: Arial, sans-serif, monospace; font-size: 12px;">
+                           style="letter-spacing: 1px; margin-top: -80px; margin-left:60px; font-family: Courier New, Courier, monospace; font-size: 12px;">
                            <span></span> {{ $studentData['particulars'] }}
                        </p>
                    @elseif (isset($studentData['first_name']))
                        <p
-                           style="letter-spacing: 1px; margin-top: -40px; margin-left:40px; font-family: Arial, sans-serif monospace; font-size: 12px;">
+                           style="letter-spacing: 1px; margin-top: -40px; margin-left:40px; font-family: Courier New, Courier, monospace; font-size: 12px;">
                            {{ $studentData['first_name'] }} <span></span> {{ $studentData['last_name'] }}
                        </p>
                    @else
@@ -29,22 +29,22 @@
                    {{-- Address --}}
                    @if (isset($studentData['home_address']))
                        <p
-                           style="letter-spacing: 1px; margin-top: -11px; margin-left:10px; font-family:Arial, sans-serif, monospace; font-size: 12px;">
+                           style="letter-spacing: 1px; margin-top: -11px; margin-left:10px; font-family:Courier New, Courier, monospace; font-size: 12px;">
                            {{ $studentData['home_address'] }}</p>
                    @endif
                    {{-- Sum in numbers --}}
                    @if (isset($studentData['downpayment2']))
                        <p
-                           style="letter-spacing: 1px; margin-top: 38px; margin-left:40px; font-family: Arial, sans-serif, monospace; font-size: 12px;">
+                           style="letter-spacing: 1px; margin-top: 38px; margin-left:40px; font-family: Courier New, Courier, monospace; font-size: 12px;">
                            {{ $capitalizedWords }} pesos
                        </p>
                    @endif
                    <div
-                       style="display: flex; flex-wrap: wrap; gap: 20px; margin-top: 20px; font-family: Arial, sans-serif, monospace; font-size: 12px;">
+                       style="display: flex; flex-wrap: wrap; gap: 20px; margin-top: 20px; font-family: Courier New, Courier, monospace; font-size: 12px;">
 
                        @if ($studentData['PaymenentStatus'] === 'FULL PAYMENT')
                            <div
-                               style="letter-spacing: 1px; margin-top: 38px; margin-left:40px; font-family: Arial, sans-serif, monospace; font-size: 12px;"">
+                               style="letter-spacing: 1px; margin-top: 38px; margin-left:40px; font-family: Courier New, Courier, monospace; font-size: 12px;">
                                FULL PAYMENT
                            </div>
                        @else
@@ -115,7 +115,7 @@
 
 
                    <div
-                       style="position: relative; width: 100%; height: 100%; margin-top:60px; font-family: Arial, sans-serif, monospace;">
+                       style="position: relative; width: 100%; height: 100%; margin-top:50px; font-family: Courier New, Courier, monospace;">
                        <div style="position:fixed; bottom:0; width: 68%; margin-left: 110px; font-size: 12px; ">
                            <p style="position:fixed; bottom:80px;">{{ $studentData['downpayment'] }}</p>
                            <p style="position:fixed; bottom:20px;">{{ $studentData['downpayment'] }}</p>

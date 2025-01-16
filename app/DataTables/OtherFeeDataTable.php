@@ -27,7 +27,7 @@ class OtherFeeDataTable extends DataTable
                 $editBtn = '<a href="#" data-bs-toggle="modal" data-bs-target="#editOtherFee" ' .
                     'onclick="editOtherFee(' . $query->id . ' ,\'' . $query->category . '\',\'' . $query->description . '\', \'' . $query->campus_id . '\',
                      \'' . $query->first_year . '\', \'' . $query->second_year . '\', \'' . $query->third_year . '\', 
-                     \'' . $query->fourth_year . '\',\'' . $query->semester . '\',\'' . $query->course_id . '\')">';
+                     \'' . $query->fourth_year . '\',\'' . $query->semester . '\')">';
                 $editBtn .= '<button type="button" class="btn btn-primary waves-effect waves-light">';
                 $editBtn .= '<i class="ri-edit-2-fill"></i>';
                 $editBtn .= '</button></a>';

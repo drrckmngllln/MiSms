@@ -88,7 +88,10 @@ class StatementofAccountController extends Controller
                     'debit' => $totalAss,
                     'credit' => '',
                     'balance' => $currentBalance,
+
                 ];
+
+                // dd($tableData);
 
                 foreach ($feeSummaries->where('school_year', $q->school_year)->where('id_number', $id_number) as $fee) {
                     $currentBalance -= $fee->downpayment;
@@ -98,7 +101,8 @@ class StatementofAccountController extends Controller
                         'doc_no' => $fee->or_number,
                         'debit' => '',
                         'credit' => '-' . $fee->downpayment,
-                        'balance' => $currentBalance . '.00',
+                        'balance' => round($currentBalance, 2),
+
                     ];
                 }
 

@@ -14,8 +14,43 @@
                     <input type="hidden" name="id" id="edit_id">
                     <div class="d-flex justify-content-center"></div>
                     <div class="form-group">
-                        <label>Code</label>
-                        <input type="text" class="form-control" name="code" id="edit_code" required>
+                        <label>Remarks</label>
+
+                        <select name="code" id="edit_code" class="form-select id-number" aria-describedby="helpId">
+                            <option value="">Select</option>
+                            <option value="TUITION FEE/UNITS">TUITION FEE/UNITS</option>
+                            <option value="Sons & Daughters of Employee">Sons & Daugters of Employees </option>
+                            <option value="Sisters and Brothers of Employee">Sisters and Brothers of Employee </option>
+                            <option value="Immediate Ward-Niece/Nephew & 1st Degree Cousin Employee">Immediate
+                                Ward-Niece/Nephew & 1st Degree Cousin Employee</option>
+                            <option value="TOP1/ Class Valedictorian">TOP1/ Class Valedictorian</option>
+                            <option value="TOP2/ Class Salutatorian">TOP2/ Class Salutatorian</option>
+                            <option value="TOP3/ 1st Honorable Mention">TOP3/ 1st Honorable Mention</option>
+                            <option value="TOP4/ 2nd Honorable Mention">TOP4/ 2nd Honorable Mention</option>
+                            <option value="TOP5/ 3rd Honorable Mention">TOP5/ 3rd Honorable Mention</option>
+                            <option value="TOP 6-10">TOP 6-10</option>
+                            <option value="TOP 11-20">TOP 11-20</option>
+                            <option value="Average 85% and Above">Average 85% and Above</option>
+                            <option value="Sons/Daugthers of AFP,PBP,PARAMILITARY Personnel">Sons/Daugthers of
+                                AFP,PBP,PARAMILITARY Personnel</option>
+                            <option value="Sons/Daugthers of Highschool & Elementary Teachers">Sons/Daugthers of
+                                Highschool & Elementary Teachers</option>
+                            <option value="Sons/Daugthers of Health Workers">Sons/Daugthers of Health Workers</option>
+                            <option value="CASH">CASH</option>
+                            <option value="Brother & Sisters Dicount Students">Brother & Sisters Dicount Students
+                            </option>
+                            <option value="MCNP-ISAP SCHOLAR/GRANTEES">MCNP-ISAP SCHOLAR/GRANTEES</option>
+                            <option value="Orphans Stay Out">Orphans Stay Out</option>
+                            <option value="SK CHAIRMAN">SK CHAIRMAN</option>
+                            <option value="Sons/Daughters of BRGY.CAPTAIN">Sons/Daughters of BRGY.CAPTAIN</option>
+                            <option value="100% Discount on Tuition Fee ORPHANS">Institutional Discount (Atheletic,Socio
+                                Cultural & School Publication)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Discount Code</label>
+                        <input type="text" class="form-control" name="discount_code" id="discount_code_id"
+                            placeholder="Ex.ACADEMIC" required>
                     </div>
                     <div class="form-group">
                         <label for="discount_target" class="form-label">Discount Target</label>
@@ -53,7 +88,11 @@
                             <option value="TUITION FEE/UNITS">TUITION FEE/UNITS</option>
                         </select>
                     </div>
-
+                    <div class="form-group">
+                        <label>Discount Type</label>
+                        <input type="text" class="form-control" name="discount_type" id="discount_type_id"
+                            placeholder="Ex.Academic Scholar" required>
+                    </div>
                     <div class="form-group">
                         <label>Discount Percentage</label>
                         <input type="text" class="form-control" name="discount_percentage"
@@ -73,14 +112,28 @@
 
 @push('scripts')
     <script>
-        function editDiscount(id, code, discount_target, description, discount_percentage) {
+        function editDiscount(id, code, discount_target, description, discount_percentage, discount_type,
+            discount_code
+        ) {
             // console.log(id);
             $('#edit_id').val(id);
             $('#edit_code').val(code);
+            // discount_select2_edit.val(code).trigger('change.select2');
             $('#edit_discount_target').val(discount_target);
             $('#edit_description').val(description);
             $('#edit_discount_percentage').val(discount_percentage);
+            $('#discount_type_id').val(discount_type);
+            $('#discount_code_id').val(discount_code);
             $('#edit_form').attr('action', location.href + '/' + id);
         }
+    </script>
+    <script>
+        let discount_select2_edit;
+        $(document).ready(function() {
+            discount_select2_edit = $('#edit_code').select2({
+                dropdownParent: $('#editMiscfee'),
+                dropdownAutoWidth: true
+            });
+        });
     </script>
 @endpush

@@ -452,15 +452,19 @@
     <script>
         $(document).ready(function() {
             function generateAutoIncrementValue(lastIdNumber) {
-                var currentValue = parseInt(lastIdNumber.slice(-4)) || 0;
+                var currentYear = new Date().getFullYear();
+                var currentValue = parseInt(lastIdNumber.slice(-4)) ||
+                    0;
                 var newValue = currentValue + 1;
                 var paddedValue = ('000' + newValue).slice(-4);
-                return paddedValue;
+                return currentYear + '-' + paddedValue;
             }
+
             $.ajax({
                 url: '{{ route('superadmin.get.LastIdNumber') }}',
                 method: 'GET',
                 success: function(response) {
+                    console.log(response);
                     var lastIdNumber = response.last_id_number;
                     var nextIdNumber = generateAutoIncrementValue(lastIdNumber);
                     $('#id_number_iddd').val(nextIdNumber);

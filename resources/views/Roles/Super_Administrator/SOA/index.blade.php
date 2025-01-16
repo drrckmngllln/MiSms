@@ -113,6 +113,7 @@
                                 <th>Debit</th>
                                 <th>Credit</th>
                                 <th>Balance</th>
+
                             </tr>
                         </thead>
                         <tbody>
@@ -126,6 +127,7 @@
                                 <td></td>
                                 <td></td>
                                 <td></td>
+
                             </tr>
                             <!-- Additional rows for Second Semester... -->
                         </tbody>
@@ -250,7 +252,7 @@
                         url: `/superadmin/getTotalAssessmentEachStudent/${id_number}`,
                         method: 'GET',
                         success: function(response) {
-                            console.log(response);
+
                             const transactionTableBody = $('#transactionTable tbody');
                             transactionTableBody.empty();
 
@@ -260,10 +262,10 @@
                                     '#93c3f7';
                                 let schoolYear =
                                     ` ${res.school_year_id}`;
-                                console.log(schoolYear);
+
                                 let YearRow = `
                             <tr class="semester-row" style="background-color: ${backgroundColor};">
-                                <td colspan="6">${schoolYear}</td>
+                                <td colspan="7">${schoolYear}</td>
                             </tr>
                         `;
                                 transactionTableBody.append(YearRow);
@@ -277,6 +279,7 @@
                                 <td class="${item.debit ? 'debit' : ''}">${item.debit || ''}</td>
                                 <td class="${item.credit ? 'credit' : ''}">${item.credit || ''}</td>
                                 <td>${item.balance}</td>
+                               
                             </tr>
                         `;
                                     transactionTableBody.append(row);

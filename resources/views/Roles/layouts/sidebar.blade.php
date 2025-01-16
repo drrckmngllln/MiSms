@@ -203,7 +203,7 @@
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
                         <li><a href="{{ route('superadmin.statementof.account') }}">SOA</a></li>
-
+                        <li><a href="{{ route('superadmin.cancel.reciept') }}">Receipt Status</a></li>
                     </ul>
                 </li>
             @endrole
@@ -307,6 +307,17 @@
                 <li>
                     <a href="javascript: void(0);" class="has-arrow waves-effect">
                         <i class="ri-money-cny-circle-line"></i>
+                        <span>College Admission</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="{{ route('superadmin.create_account.index') }}">College Student Account</a>
+                        </li>
+                    </ul>
+                <li>
+
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="ri-money-cny-circle-line"></i>
                         <span>Finance</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
@@ -347,6 +358,7 @@
                         </li>
                         <li><a href="{{ route('superadmin.highSchool.index') }}">High School Student Account</a>
                         </li>
+
                     </ul>
                 </li>
                 <li>
@@ -359,6 +371,8 @@
                         <li><a href="{{ route('superadmin.tuition_fees.index') }}">Tuition Fee</a></li>
                         <li><a href="{{ route('superadmin.misc_fees.index') }}">Miscellaneous</a></li>
                         <li><a href="{{ route('superadmin.laboratory.index') }}">Laboratory</a></li>
+                        <li><a href="{{ route('superadmin.fullPackage.index') }}">Full Package</a></li>
+
                     </ul>
                 </li>
                 <li>
@@ -380,6 +394,16 @@
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
                         <li><a href="{{ route('superadmin.statementof.account') }}">SOA</a></li>
+
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="ri-chat-history-fill"></i>
+                        <span>Activity Logs</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="{{ route('superadmin.activityLogs.index') }}">Logs</a></li>
 
                     </ul>
                 </li>

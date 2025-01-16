@@ -11,6 +11,8 @@
                 <form action="" method="POST" id="status_save_intersession" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="id" id="edit_idddd">
+                    <input type="hidden" name="id_number" id="id_number_id">
+
                     <div class="row">
                         <label for="occupation" class="form-label">Status</label>
                         <select name="course_id" id="course_id_select2" class="form-select id-number"
@@ -32,12 +34,83 @@
 </div><!-- /.modal -->
 @push('scripts')
     <script>
-        function Intersession(id) {
+        function Intersession(id, id_number) {
             $('#edit_idddd').val(id);
+            $('#id_number_id').val(id_number);
+
             var form = $('#status_save_intersession');
             var route = "{{ route('superadmin.studentapp.changeStatusIntersession', ['id' => ':id']) }}";
             route = route.replace(':id', id);
             form.attr('action', route);
+        }
+
+        $(document).on('submit', '#status_save_intersession', function(e) {
+            e.preventDefault();
+
+            var form = $(this);
+            var studentId = $('#edit_idddd').val();
+            var idNumber = $('#id_number_id').val();
+
+            $.ajax({
+                url: "{{ route('superadmin.checkStudentBalance') }}",
+                method: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    id: studentId,
+                    id_number: idNumber,
+                },
+                success: function(response) {
+                    if (response.has_balance) {
+                        // Kapag may balance
+                        Swal.fire({
+                            title: "Previous Balance Detected",
+                            text: "This student has a previous balance. Do you want to proceed and talk to finance?",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonText: "Yes, proceed",
+                            cancelButtonText: "No, cancel"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                changeStatus(studentId, idNumber);
+                            }
+                        });
+                    } else {
+                        // Kapag walang balance, proceed agad
+                        changeStatus(studentId, idNumber);
+                    }
+                },
+                error: function() {
+                    Swal.fire({
+                        title: "Error",
+                        text: "Failed to check student balance. Please try again.",
+                        icon: "error"
+                    });
+                }
+            });
+        });
+
+        function changeStatus(studentId, idNumber) {
+            $.ajax({
+                url: "{{ route('superadmin.statusChange') }}",
+                method: 'POST',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    id: studentId,
+                    id_number: idNumber,
+                },
+                success: function(response) {
+                    Swal.fire({
+                        title: "Status Changed!",
+                        text: "Your status has been changed.",
+                        icon: "success"
+                    });
+                    $('#interSession').modal('hide');
+                    location.reload();
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
         }
     </script>
 @endpush

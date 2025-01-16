@@ -47,10 +47,10 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="form-group">
+                    {{-- <div class="form-group">
                         <label>email</label>
                         <input type="text" class="form-control" name="email" id="edit_clear_email">
-                    </div>
+                    </div> --}}
                 </div>
                 <div class="modal-footer">
                     <button type="submit" id="submit_id" class="btn btn-primary">Save Level</button>
@@ -62,8 +62,8 @@
 </div>
 @push('scripts')
     <script>
-        function hasActionedit(id, time, section_id, day, room, instructor_id, subject_id) {
-            // console.log(id);
+        function hasActionedit(id, time, section_id, day, room, instructor_id, subject_id, sectionSub) {
+            console.log(time);
             currentEditId = id;
             // console.log(currentEditId);
             $('#edit_id').val(id);
@@ -73,7 +73,6 @@
             $('#edit_clear_room').val(room);
             // $('#edit_clear_instructor_id').val(instructor_id);
             instructors_select_edit.val(instructor_id).trigger('change.select2');
-            $('#edit_clear_email').val(email);
 
 
             $("#edit_form_sections").submit(function(event) {

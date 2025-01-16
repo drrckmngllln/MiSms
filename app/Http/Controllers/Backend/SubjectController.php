@@ -50,8 +50,15 @@ class SubjectController extends Controller
     {
         $subjects = new Subject([
             ...$request->only([
-                'semester_id', 'code', 'descriptive_tittle', 'total_units', 'lecture_units', 'lab_units',
-                'pre_requisite', 'total_hrs_per_week', 'is_active'
+                'semester_id',
+                'code',
+                'descriptive_tittle',
+                'total_units',
+                'lecture_units',
+                'lab_units',
+                'pre_requisite',
+                'total_hrs_per_week',
+                'is_active'
             ])
         ]);
         $subjects->save();

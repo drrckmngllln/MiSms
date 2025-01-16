@@ -43,16 +43,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="course" class="form-label">Course</label>
-                            <select name="course_id" id="course_id_select2" class="form-select id-number"
-                                aria-describedby="helpId" required>
-                                <option value="">Select Course</option>
-                                @foreach ($course as $cs)
-                                    <option value="{{ $cs->id }}">{{ $cs->code }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                       
                         <div class="form-group">
                             <label>1st Year</label>
                             <input type="text" class="form-control" name="first_year" id="first_year">

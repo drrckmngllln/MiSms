@@ -327,11 +327,12 @@
 
 
             const url = location.origin + '/superadmin/curriculum_courses/' + year_level +
-                "/" + semester_id + "/" + section_code;
+                "/" + semester_id + "/" + section_code + "/" + curriculum_id;
             const requestData = {
                 section_code: section_code,
                 semester_id: semester_id,
                 year_level: year_level,
+                curriculum_id: curriculum_id
             }
             $("#section-subject").DataTable().destroy();
             var dt = $("#section-subject").DataTable({
@@ -513,8 +514,7 @@
                                     _token: '{{ csrf_token() }}'
                                 },
                                 success: function(response) {
-                                    console.log('IDs sent successfully:',
-                                        allSchoolYearIds);
+
 
 
                                     localStorage.setItem('school_year', JSON

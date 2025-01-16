@@ -11,6 +11,8 @@
             margin-left: 10px;
             flex: 1;
         }
+
+        /* Base styling for select */
     </style>
     <div class="page-content">
         <div class="container-fluid">
@@ -22,6 +24,14 @@
                 <input type="hidden" id="fee_student_collection" name="fee_student_collection">
                 <input type="hidden" name="semester" id="semester_ID_ID">
                 <input type="hidden" name="year_level" id="year_level_ID_ID">
+                <input type="text" class="form-control" name="payment2hidden" id="paymenthidden_id2" hidden>
+                <input type="text" class="form-control" name="downpayment22" id="downpayment_2" hidden>
+                <input type="text" class="form-control" name="department_id" id="dept_id" hidden>
+                <input type="text" class="form-control" name="role_name_id" value="{{ $id }}" hidden
+                    id="role_name_id">
+                <input type="text" class="form-control" name="campus_id" id="campus_id_ID" hidden>
+                <input type="text" class="form-control" name="course_id" id="course_id_id" hidden>
+
 
                 <div class="row">
                     <div class="col-12">
@@ -36,6 +46,51 @@
                                         value="" required>
                                 </div>
                                 <div class="form-group">
+                                    <label>Cash/Check</label>
+                                    <select name="payment_status" id="payment_status" class="form-select">
+                                        <option value="">--Select One--</option>
+                                        <option value="Cash">Cash</option>
+                                        <option value="BDO Unibank Inc">BDO Unibank Inc</option>
+                                        <option value="BPI">BPI</option>
+                                        <option value="Metropolitan Bank and Trust Company">Metropolitan Bank and Trust
+                                            Company</option>
+                                        <option value="PNB">PNB</option>
+                                        <option value="Security Bank Corporation">Security Bank Corporation</option>
+                                        <option value="China Bank">China Bank</option>
+                                        <option value="UnionBank of the Philippines">UnionBank of the Philippines</option>
+                                        <option value="EastWest Bank">EastWest Bank</option>
+                                        <option value="Rizal Commercial Banking Corporation">RCBC</option>
+                                        <option value="Philippine Savings Bank ">PSBank
+                                        </option>
+                                        <option value="Standard Chartered Bank">Standard Chartered Bank
+                                        </option>
+                                        <option value="HSBC">HSBC
+                                        </option>
+                                        <option value="Landbank">Landbank
+                                        </option>
+                                        <option value="Citibank NA">Citibank NA</option>
+                                        <option value="Deutsche Bank AG">Deutsche Bank AG</option>
+                                        <option value="JPMorgan Chase Bank NA">JPMorgan Chase Bank</option>
+                                        <option value="Bank of China Philippine Branch">Bank of China (Philippine Branch)
+                                        </option>
+                                        <option value="Development Bank of the Philippines DBP">Development Bank of the
+                                            Philippines
+                                            (DBP)
+                                        </option>
+                                        <option value="Pag IBIG Fund">Pag-IBIG Fund
+                                        </option>
+                                        <option value="China Bank Savings">China Bank Savings
+                                        </option>
+                                        <option value="Robinsons Bank Corporation">Robinsons Bank Corporation</option>
+
+                                    </select>
+                                </div>
+                                <div class="form-group" id="bank-details" style="display: none;">
+                                    <label>Check No.</label>
+                                    <input type="text" name="check_no" class="form-control" placeholder="Enter check no">
+                                </div>
+
+                                <div class="form-group">
                                     <label>Incharge</label>
                                     <input type="text" class="form-control" name="cahier_in_charge"
                                         id="edit_cashier_in_charge" value="{{ $role }}" readonly>
@@ -47,8 +102,8 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Date</label>
-                                    <input type="text" class="form-control" name="date" id="edit_date" value=""
-                                        readonly>
+                                    <input type="text" class="form-control" name="date" id="edit_date"
+                                        value="" readonly>
                                 </div>
 
 
@@ -93,8 +148,8 @@
                                 <div class="row align-items-center" id="rowFields">
                                     <div class="col-md-2 mb-2">
                                         <label for="downpayment_id">Amount Received:</label>
-                                        <input type="text" class="form-control" name="downpayment" id="downpayment_id"
-                                            value="" required>
+                                        <input type="text" class="form-control" name="downpayment"
+                                            id="downpayment_id" value="" required>
                                     </div>
                                     <div class="col-md-2 mb-2">
                                         <label for="payable_id">Amount to pay:</label>
@@ -149,6 +204,28 @@
 
 
 
+                            </div>
+                        </div>
+                        <div class="card" style="width:1200px;">
+                            <div class="card-body">
+                                <h4 class="card-title"><b>Fee Breakdown</b>
+
+                                </h4>
+                                <table id="live-breakdown" class="table table-striped table-bordered dt-responsive nowrap"
+                                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>Downpayment</th>
+                                            <th>Prelims</th>
+                                            <th>Midterms</th>
+                                            <th>Semi-Final</th>
+                                            <th>Finals</th>
+                                            <th>Total Assessment</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                         <div class="card" style="width:1200px;">
@@ -238,7 +315,7 @@
 
                         <div class="card" style="width:370px; left:700px;">
                             <div class="card-body">
-                                <h4 class="card-title">Fee Breakdown</h4>
+                                <h4 class="card-title">Original Fee Breakdown</h4>
                                 <table id="fee-breakdown-table"
                                     class="table table-striped table-bordered dt-responsive nowrap"
                                     style="border-collapse: collapse; border-spacing: 0; width: 100%;">
@@ -298,6 +375,9 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
+            // Get the CSRF token from Laravel meta tag
+            var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
             $('#fee_summaries_id').submit(function(event) {
                 event.preventDefault();
                 $('#total_assessment_idddds').val(totalAssessmentValue);
@@ -311,6 +391,7 @@
                     toastr.error('The amount must be greater than the payable only.');
                     return;
                 }
+
                 const title = 'Confim Payment: ' + PaymentAmount + ', ' + 'Particulars: ' + ' ' +
                     Particulars;
                 Swal.fire({
@@ -320,7 +401,6 @@
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
                     confirmButtonText: 'YES',
-
                 }).then((result) => {
                     if (result.isConfirmed) {
                         var formData = $(this).serialize();
@@ -328,19 +408,22 @@
                             type: 'POST',
                             url: '{{ route('superadmin.save.FeeSummaries') }}',
                             data: formData,
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken
+                            },
                             success: function(response) {
                                 $('#student-feesummaries-table').DataTable().ajax
                                     .reload();
-                                $('#assesment-Breakdownsss').DataTable().ajax
-                                    .reload();
+                                $('#assesment-Breakdownsss').DataTable().ajax.reload();
+                                $('#live-breakdown').DataTable().ajax.reload();
 
                                 if (response.status === 'success') {
                                     toastr.success('Confirmed!!');
-                                    //exess Amount will display
-                                    var exessAmount = response.data.exessAmount
+
+                                    var excessAmount = response.data.exessAmount
                                         .toFixed(2);
-                                    var excessAmount = $('#excess_id').val();
-                                    // console.log(excessAmount);
+                                    $('#excess_id').val(excessAmount);
+
                                     Swal.fire({
                                         title: 'Excess Amount',
                                         text: 'Your excess is ' + excessAmount,
@@ -348,20 +431,15 @@
                                         confirmButtonText: 'Print Recipt',
                                     }).then((printResult) => {
                                         if (printResult.isConfirmed) {
-                                            var formData = $(this).serialize();
                                             var studentId = window.idValue;
-                                            // Check kung merong studentId
                                             var isScholarship = $(
                                                 '#customSwitch1').is(
                                                 ':checked');
+                                            var selectedFees = $(
+                                                'input[name="selected_fees"]'
+                                            ).val();
 
                                             if (studentId) {
-                                                var isScholarship = $(
-                                                    '#customSwitch1').is(
-                                                    ':checked');
-                                                var selectedFees = $(
-                                                    'input[name="selected_fees"]'
-                                                ).val();
                                                 $.ajax({
                                                     type: 'GET',
                                                     url: 'printRecipt/' +
@@ -369,6 +447,9 @@
                                                     data: {
                                                         scholarship: isScholarship,
                                                         selectedFees: selectedFees
+                                                    },
+                                                    headers: {
+                                                        'X-CSRF-TOKEN': csrfToken
                                                     },
                                                     success: function(
                                                         response) {
@@ -434,10 +515,9 @@
                                                 );
                                             }
                                         }
-
                                     });
                                 }
-                                updatePage(response);
+                                // updatePage(response);
                             },
                             error: function(error) {
                                 console.error('Error:', error);
@@ -451,23 +531,24 @@
         function updatePage(response) {
 
             var updatedData = response.data;
-            console.log(updatedData);
-            var tdDownPayment = $('#fee-breakdown-table tbody').find('td:contains(\'DownPayment\')');
-            // Update the content of the <td> element
-            tdDownPayment.next('td').text(updatedData.newDownpayment.toFixed(2));
-            var tdPrelims = $('#fee-breakdown-table tbody').find('td:contains(\'Prelims\')');
-            tdPrelims.next('td').text(updatedData.newPrelims.toFixed(2));
-            var tdElement = $('#fee-breakdown-table tbody').find('td:contains(\'Midterms\')');
-            // Update the content of the <td> element
-            tdElement.next('td').text(updatedData.newMidterms.toFixed(2));
 
-            var tdSemiFinals = $('#fee-breakdown-table tbody').find('td:contains(\'Semi Finals\')');
-            tdSemiFinals.next('td').text(updatedData.newSemis.toFixed(2));
-            // var tdFinals = $('#fee-breakdown-table tbody').find('td:contains(\'Finals\')');
-            // tdFinals.next('td').text(updatedData.newFinals.toFixed(4));
+            // var tdDownPayment = $('#fee-breakdown-table tbody').find('td:contains(\'DownPayment\')');
 
-            $('#finals_id').text(updatedData.newFinals.toFixed(2));
-            $('#total_assessment_id').text(updatedData.newTotalAssestment.toFixed(2));
+            // tdDownPayment.next('td').text(updatedData.newDownpayment.toFixed(2));
+            // var tdPrelims = $('#fee-breakdown-table tbody').find('td:contains(\'Prelims\')');
+            // tdPrelims.next('td').text(updatedData.newPrelims.toFixed(2));
+            // var tdElement = $('#fee-breakdown-table tbody').find('td:contains(\'Midterms\')');
+
+            // tdElement.next('td').text(updatedData.newMidterms.toFixed(2));
+
+            // var tdSemiFinals = $('#fee-breakdown-table tbody').find('td:contains(\'Semi Finals\')');
+            // tdSemiFinals.next('td').text(updatedData.newSemis.toFixed(2));
+            // // var tdFinals = $('#fee-breakdown-table tbody').find('td:contains(\'Finals\')');
+            // // tdFinals.next('td').text(updatedData.newFinals.toFixed(4));
+
+            // $('#finals_id').text(updatedData.newFinals.toFixed(2));
+            // $('#total_assessment_id').text(updatedData.newTotalAssestment.toFixed(2));
+
 
         }
     </script>
@@ -624,6 +705,37 @@
 
             function updateSelectedFeesInput() {
                 selectedFeesInput.value = Array.from(selectedFees.keys()).join(",");
+            }
+        });
+    </script>
+    <script>
+        document.getElementById('payable_id').addEventListener('input', function() {
+            // Kunin ang value ng payable_id at i-set ito sa downpayment_id2
+            document.getElementById('paymenthidden_id2').value = this.value;
+            document.getElementById('downpayment_2').value = this.value;
+
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#checke_id').select2({
+                // dropdownParent: $('#adddetails'),
+                dropdownAutoWidth: true
+            });
+        });
+    </script>
+    <script>
+        document.getElementById('payment_status').addEventListener('change', function() {
+            const bankDetailsDiv = document.getElementById('bank-details');
+            const bankDetailsInput = document.getElementById('bank_details_input');
+
+            if (this.value === 'Cash') {
+                bankDetailsDiv.style.display = 'none'; // Itago ang input field
+                bankDetailsInput.removeAttribute('required'); // Alisin ang required attribute
+                bankDetailsInput.value = ''; // I-clear ang input value
+            } else if (this.value !== '') {
+                bankDetailsDiv.style.display = 'block'; // Ipakita ang input field
+                bankDetailsInput.setAttribute('required', 'required'); // Gawing required ang input field
             }
         });
     </script>

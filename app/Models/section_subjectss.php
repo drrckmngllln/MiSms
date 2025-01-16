@@ -79,4 +79,8 @@ class section_subjectss extends Model
     {
         return $this->hasMany(adddetails::class, 'section_id', 'section_id')->latest();
     }
+    public function adddetailss2()
+    {
+        return $this->hasOne(adddetails::class, 'sectionSub_id', 'sectionSub_id');
+    }
 }

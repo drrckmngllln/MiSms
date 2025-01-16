@@ -17,6 +17,7 @@
                     @method('POST')
                     <input type="hidden" name="subject_id" id="detailsofsubject_id">
                     <input type="hidden" name="adddetails_id" id="adddetails_id">
+                    <input type="hidden" name="sectionsub_id" id="section_sub_id">
 
 
 
@@ -73,6 +74,7 @@
                             <select name="instructor_id" id="discount_id_select2" class="form-select id-number"
                                 aria-describedby="helpId" required>
                                 <option value="">Select Instructor</option>
+                                <option value="TBA">TBA</option>
                                 @foreach ($instructors as $instructor)
                                     <option value="{{ $instructor->id }}">{{ $instructor->full_name }} /
                                     </option>
@@ -93,7 +95,8 @@
 
 @push('scripts')
     <script>
-        function hasAction(id, time, room, day, instructor_id, section_code, subject_id, adddetails_id) {
+        function hasAction(id, time, room, day, instructor_id, section_code, subject_id, adddetails_id, secid) {
+            // console.log(secid);
 
             $('#detailsofsubject_id').val(id);
             $('#clear_time').val(time);
@@ -104,6 +107,8 @@
             $('#section_idd').val(section_code).trigger('change');
             $('#subject_iddddd').val(subject_id);
             $('#adddetails_id').val(adddetails_id);
+            $('#section_sub_id').val(secid);
+
         }
     </script>
     <script>
@@ -129,7 +134,7 @@
             var subjectID = $('#subject_iddddd').val();
             var semester = $('#semester_id_add_details').val();
             var school_year = $('#school_year_id_add_details').val();
-
+            var sectionSub_id = $('#section_sub_id').val();
 
 
             $.ajax({
@@ -143,7 +148,8 @@
                     instructor_id: instructor_id,
                     section_id: section_id,
                     semester: semester,
-                    school_year: school_year
+                    school_year: school_year,
+                    sectionSub_id: sectionSub_id
                 },
                 success: function(response) {
                     toastr.success(response.message);

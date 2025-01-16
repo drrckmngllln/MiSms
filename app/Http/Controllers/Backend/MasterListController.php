@@ -2,11 +2,18 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\Exports\CollectionReportperCampExport;
+use App\Exports\DiscountCategoryExport;
+use App\Exports\discountCollectionExport;
+use App\Exports\feescollectionExport;
 use App\Exports\MasterListExport;
 use App\Exports\MasterListExportChed;
 use App\Http\Controllers\Controller;
+use App\Models\Campus;
 use App\Models\CreateAccount;
+use App\Models\Department;
 use App\Models\fee_summary;
+use App\Models\FeeCollectionHistory;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
@@ -335,5 +342,241 @@ class MasterListController extends Controller
         ];
         DB::table('activity_logs')->insert($activityLog);
         return Excel::download(new MasterListExportChed($studentData, $withGrade), 'StudentMasterList.xlsx');
+    }
+    public function generatePDFDailyCollection(Request $request)
+    {
+        // Retrieve input values
+
+        $dateFrom = $request->input('date');
+        $dateTo = $request->input('dateTo') ?? $request->input('date');
+
+        // Validate the date range
+        $validator = Validator::make($request->all(), [
+            'date' => 'required|date',
+            'dateTo' => 'nullable|date|after_or_equal:date', // Ensures dateTo is later than or equal to dateFrom
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        // Proceed if validation passes
+        $dailyCollection = fee_summary::with([
+            'create_account',
+            'nonassessed',
+            'fee_collection_summaries',
+        ])
+            ->where('role_name_id', $request->role_name_id)
+            ->when($request->campus, function ($query) use ($request) {
+                return $query->where('campus_id', $request->campus);
+            })
+            ->whereDate('date', ">=", $dateFrom)
+            ->whereDate('date', "<=", $dateTo)
+            ->get();
+
+        // Format the date for display
+        // display campus
+        $campus = $request->campus ? Campus::find($request->campus) : null;
+        $campusDescription = $campus?->description ?? '';
+        $formattedDate = $dateFrom == $dateTo
+            ? Carbon::parse($dateFrom)->format('F d, Y')
+            : Carbon::parse($dateFrom)->format('F d, Y') . ' to ' . Carbon::parse($dateTo)->format('F d, Y');
+
+        // Map the collection for the view
+        $extractedData = $dailyCollection->map(function ($item) {
+            return [
+                'cashier' => $item->role_name_id,
+                'name' => $item->name,
+                'date' => $item->date,
+                'or_number' => $item->or_number,
+                'id_number' => $item->create_account?->last_name . " " . $item->create_account?->first_name . " " . $item->create_account?->middle_name,
+                'period' => $item->schoolYear?->code,
+                'dept' => $item->department?->code,
+                'bank' => $item->payment_status,
+                'check_no' => $item->check_no,
+                'amount' => $item->downpayment,
+            ];
+        });
+        // dd($extractedData);
+
+        // Pass the extracted data to the view
+        $pdf = Pdf::loadView('Roles.Super_Administrator.printStudentAssessment.dailycollection', [
+            'data' => $extractedData,
+            'date' => $formattedDate,
+            'campus' => $campusDescription,
+        ]);
+
+        return $pdf->stream('dailyCollection.pdf');
+    }
+    public function discountCollection(Request $request)
+    {
+        $deparment = $request->department_id_id;
+        $discount_collection = $request->discount_collection;
+
+        $validator = Validator::make($request->all(), [
+            'department_id_id' => 'nullable',
+            'discount_collection' => 'nullable',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+        $tablequery = fee_summary::when($deparment, function ($query) use ($deparment) {
+            return $query->where('department_id', $deparment);
+        })
+            ->where('type', $discount_collection)
+            ->get();
+        // dd($tablequery);
+        $studentData = $tablequery->map(function ($item) {
+            return [
+                'id_number' => $item->id_number,
+                'full_name' => $item->create_account?->last_name . " " . $item->create_account?->first_name . " " . $item->create_account?->middle_name,
+                'course/department' => $item->department?->description,
+                'discount_type' => $item->discount_type,
+                'discount_code' => $item->discount_code,
+                'DiscountAmount' => $item->downpayment,
+                'reason/remarks' => $item->{'reason/remarks'},
+
+            ];
+        });
+        return Excel::download(new discountCollectionExport($studentData), 'DailyCollection.xlsx');
+    }
+    public function generatePDFDailyCollectionFees(Request $request)
+    {
+
+        $dateFrom = $request->input('date');
+        $dateTo = $request->input('dateTo') ?? $request->input('date');
+
+        $validator = Validator::make($request->all(), [
+            'date' => 'required|date',
+            'dateTo' => 'nullable|date|after_or_equal:date',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+        $dailyCollection = FeeCollectionHistory::with(['create_account', 'campus', 'course'])
+            ->when($request->course_id, function ($query) use ($request) {
+                return $query->where('course_id', $request->course_id);
+            })
+            ->whereDate('created_at', ">=", $dateFrom)
+            ->whereDate('created_at', "<=", $dateTo)
+            ->get();
+        // dd($dailyCollection);
+        foreach ($dailyCollection as $item) {
+
+            $category = $item->category;
+            $course = $item->course?->code;
+            $subCategory = $item->subCategory;
+            $amount = $item->amount_subtracted ?? 0;
+            if (!isset($groupedData[$course][$category])) {
+                $groupedData[$course][$category] = [];
+            }
+            if ($amount == 0) {
+                continue;
+            }
+
+            if (!isset($groupedData[$course][$category][$subCategory])) {
+                $groupedData[$course][$category][$subCategory] = [
+                    'amount' => 0,
+                    'year_level' => $item->year_level,
+                    'campus' => $item->campus?->code,
+
+                ];
+            }
+            $groupedData[$course][$category][$subCategory]['amount'] += $amount;
+        }
+
+        return Excel::download(new feescollectionExport($groupedData), 'StudentReport.xlsx');
+    }
+    public function generateReportCollectionperCampus(Request $request)
+    {
+        // dd($request->all());
+        $dateFrom = $request->input('date');
+        $dateTo = $request->input('dateTo') ?? $request->input('date');
+
+        $validator = Validator::make($request->all(), [
+            'date' => 'required|date',
+            'dateTo' => 'nullable|date|after_or_equal:date',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+        $dailyCollection = FeeCollectionHistory::with(['create_account', 'campus', 'course', 'department'])
+            ->when($request->department_id, function ($query) use ($request) {
+                return $query->where('department_id', $request->department_id);
+            })
+            ->where('role_name_id', $request->role_id)
+            ->whereDate('created_at', ">=", $dateFrom)
+            ->whereDate('created_at', "<=", $dateTo)
+            ->get();
+        // dd($dailyCollection);
+        $data = [];
+        foreach ($dailyCollection as $collection) {
+            $dept = $collection->department?->code;
+            $role = $collection->role_name?->name;
+            if (!isset($data[$dept])) {
+                $data[$dept] = [
+                    'date' => Carbon::now()->format('m-d-Y'),
+                    'campus' => $dailyCollection->first()?->campus?->code,
+                    'department' => $dept,
+                    'name' => $role,
+
+                ];
+            }
+            if (!isset($data[$dept][$collection->category])) {
+                $data[$dept][$collection->category] = floatval($collection->amount_subtracted);
+            } else {
+                if ($collection->amount_subtracted !== null)
+                    $data[$dept][$collection->category] += floatval($collection->amount_subtracted);
+            }
+        }
+
+        // $categoryTotals = $dailyCollection->groupBy('category')->mapWithKeys(function ($items, $category) {
+        //     return [$category => $items->sum('amount_subtracted')];
+        // });
+
+        // $mergedData = array_merge($mergedData, $categoryTotals->toArray());
+        // $mergedData = [$dept => $mergedData];
+        // dd($data);
+        return Excel::download(new CollectionReportperCampExport($data), 'CollectionPerDepartment.xlsx');
+    }
+    public function generateReportCollectionperCategory(Request $request)
+    {
+
+        // $validator = Validator::make($request->all(), [
+        //     'date' => 'required|date',
+        //     'dateTo' => 'nullable|date|after_or_equal:date',
+        //     'department_id' => 'nullable',
+        //     'discCategory_id' => 'nullable',
+        //     'discount_collection4' => 'nullable',
+        // ]);
+
+        // if ($validator->fails()) {
+        //     return redirect()->back()->withErrors($validator)->withInput();
+        // }
+        // dd($request->all());
+        $dateFrom = $request->input('date');
+        $dateTo = $request->input('dateTo') ?? $request->input('date');
+
+        $dailyCollection = fee_summary::with(['discount1'])
+            ->where('type', 'Discount')
+            ->when($request->department_id, function ($query) use ($request) {
+                return $query->where('department_id', $request->department_id);
+            })
+            ->where('discount_id', $request->discCategory_id)
+            ->whereDate('created_at', ">=", $dateFrom)
+            ->whereDate('created_at', "<=", $dateTo)
+            ->get();
+        // dd($dailyCollection);
+        $studentData = $dailyCollection->map(function ($item) {
+            return [
+                'department' => $item->department?->code,
+                'discount' => $item->discount1?->code,
+                'amount' => $item->downpayment,
+            ];
+        });
+        return Excel::download(new DiscountCategoryExport($studentData), 'DiscountCollectionCategory.xlsx');
     }
 }

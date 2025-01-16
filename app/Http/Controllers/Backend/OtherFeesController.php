@@ -6,6 +6,7 @@ use App\DataTables\OtherFeeDataTable;
 use App\Http\Controllers\Controller;
 use App\Models\Campus;
 use App\Models\Course;
+use App\Models\CreateAccount;
 use App\Models\fee_summary;
 use App\Models\OtherFee;
 use App\Models\SchoolYear;
@@ -17,6 +18,8 @@ use Spatie\Permission\Models\Role;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use PDO;
+use Termwind\Components\Dd;
 
 class OtherFeesController extends Controller
 {
@@ -306,5 +309,46 @@ class OtherFeesController extends Controller
 
         //save on statement of account
         return redirect()->back()->with('success', ' Added Successfully!');
+    }
+    public function checkPreviousBalance(Request $request, $id_number)
+    {
+
+        $previousBalance = studentAssesment::where('id_number', $id_number)
+            ->whereNotNull('previousBalance') // Previous balance na hindi NULL
+            ->orderBy('id', 'desc') // Pinaka-latest
+            ->first();
+        // dd($previousBalance);
+
+        return response()->json(['hasBalance' => $previousBalance]);
+    }
+    public function checkBalance(Request $request)
+    {
+        $latestSemester = studentAssesment::where('id_number', $request->id_number)->max('semester');
+        $student = studentAssesment::where('id_number', $request->id_number)
+            ->where('semester', $latestSemester)
+            ->first();
+        if ($student && $student->total_assessment > 0) {
+            return response()->json(['has_balance' => true]);
+        }
+
+        return response()->json(['has_balance' => false]);
+    }
+    public function statusChange(Request $request)
+    {
+        // dd($request->all());
+        $updated = CreateAccount::where('id', $request->id)
+            ->update(['status' => 'FOR ENROLLMENT']);
+
+        if ($updated) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Status successfully updated to FOR ENROLLMENT.'
+            ], 200);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'No record found to update.'
+            ], 404);
+        }
     }
 }

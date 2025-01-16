@@ -12,13 +12,17 @@ class CurriculumCoursesController extends Controller
 {
     public function getCoursesByCurriculum($year_level, $section_id, $semester_id, Request $request)
     {
-        // dd($year_level, $semester_id, $section_id);
+        // dd($request->all());
 
         // dd($request->all());
         if (request()->ajax()) {
             $subjects = section_subjectss::where('section_id', $request->section_code)
+                ->where('semester_id', $request->semester_id)
+                ->where('year_level', $request->year_level)
+                ->where('curriculum_id', $request->curriculum_id)
                 ->where('is_active', false)
                 ->get();
+            // dd($subjects);
             // $subjects->load(['detailsofsubjects' => function ($query) use ($section_id) {
             //     $query->where('section_id', $section_id);
             // }]);
@@ -44,6 +48,9 @@ class CurriculumCoursesController extends Controller
                     return $query->latestDetailOfSubject?->instructorss?->department_id;
                 })
                 ->addColumn('instructor_id', function ($query) {
+                    if (!is_numeric($query->instructor_id)) {
+                        return 'To be Assigned';
+                    }
                     return $query->instructor?->full_name;
                 })
 
@@ -62,6 +69,7 @@ class CurriculumCoursesController extends Controller
                 ->where('semester_id', $semester_id)
                 ->where('is_active', false)
                 ->get();
+            // dd($subjects);
 
             // dd($subjects);
             // $subjects->load(['detailsofsubjects' => function ($query) use ($section) {

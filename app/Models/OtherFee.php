@@ -29,7 +29,7 @@ class OtherFee extends Model
         'second_year' => 'required',
         'third_year' => 'required',
         'fourth_year' => 'required',
-        'course_id' => 'required',
+
     ];
 
     public function campus()

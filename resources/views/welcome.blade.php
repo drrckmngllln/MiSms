@@ -213,7 +213,7 @@
                 <ul class="desktop-nav">
                     <li><a href="#">Home</a></li>
                     <li><a href="#">About</a></li>
-                    <li><a href="#">Enroll Now!</a></li>
+                    <li><a href="{{ route('student.info') }}">Enroll Now!</a></li>
                 </ul>
                 <div class="mobile-nav" id="mobileNav">
                     <ul>
@@ -269,5 +269,6 @@
         });
     </script>
 </body>
+
 
 </html>

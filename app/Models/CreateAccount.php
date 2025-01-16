@@ -56,6 +56,7 @@ class CreateAccount extends Model
         'houseno',
         'regioncode',
         'regionname',
+        'otherLives'
     ];
     public static $rules = [
         'id_number' => 'required',
@@ -116,13 +117,13 @@ class CreateAccount extends Model
     }
     public function student_subject()
     {
-        return $this->hasOne(StudentSubject::class, 'id_number', 'id_number')->orderBy('semester', 'desc')
+        return $this->hasOne(StudentSubject::class, 'id_number', 'id_number')->orderBy('created_at', 'desc')
             ->orderBy('year_level', 'desc')
             ->orderBy('course_id');
     }
     public function student_assestment()
     {
-        return $this->belongsTo(studentAssesment::class, 'id_number', 'id_number')->orderBy('semester', 'desc');
+        return $this->belongsTo(studentAssesment::class, 'id_number', 'id_number')->orderBy('created_at', 'desc');
     }
     public function feesStudentSummary()
     {
@@ -204,5 +205,10 @@ class CreateAccount extends Model
     public function fee_collection()
     {
         return $this->hasMany(FeeCollectionHistory::class, 'id_number', 'id_number');
+    }
+    public function cancelReceipt()
+    {
+        return $this->hasOne(CancelReceipt::class, 'id_number', 'id_number')
+            ->orderBy('created_at', 'desc');
     }
 }

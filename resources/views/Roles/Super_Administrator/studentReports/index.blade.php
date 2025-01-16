@@ -442,7 +442,8 @@
                                                 aria-describedby="helpId">
                                                 <option value="all">All Student</option>
                                                 @foreach ($Students as $student)
-                                                    <option value="{{ $student->id }}">{{ $student->first_name }}
+                                                    <option value="{{ $student->id }}">
+                                                        {{ $student->first_name }}
                                                         {{ $student->middle_name }} {{ $student->last_name }},
                                                         {{ $student->id_number }}</option>
                                                 @endforeach
@@ -469,58 +470,122 @@
                                                 </label>
                                             </div>
                                         </div>
-                                        <div class="col-md-3 mb-3">
+                                        <div class="col-md-1 mb-1">
                                             <button type="button" class="btn btn-success waves-effect waves-light"
-                                                style="margin-top: 30px" onclick="generateIndividualStudent()">Generate to
-                                                Excel</button>
+                                                style="margin-top: 30px; margin-right: 5px;"
+                                                onclick="generateIndividualStudent()">Generate</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <form action="IndividuaLStudents">
+                                    <h4 class="card-title"><b>Student View Subjects</b></h4>
+                                    <div class="row">
+                                        <div class="col-md-3 mb-3">
+                                            <label for="students">Student Name:</label>
+                                            <select id="studentss_id_individual2" name="id_number" class="form-select"
+                                                aria-describedby="helpId">
+                                                <option value="all">All Student</option>
+                                                @foreach ($Students as $student)
+                                                    <option value="{{ $student->id_number }}">
+                                                        {{ $student->first_name }}
+                                                        {{ $student->middle_name }} {{ $student->last_name }},
+                                                        {{ $student->id_number }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <label for="course" class="form-label">School Year</label>
+                                            <select name="school_year" id="school_year_individual2" class="form-select"
+                                                required>
+                                                <option value="" disabled selected>--Select One--</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-1 mb-3">
+                                            <label for="">Semester</label>
+                                            <input type="text" class="form-control" id="semesterID_view"
+                                                placeholder="" aria-describedby="helpId" name="semester">
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <label for="course">Course:</label>
+                                            <select id="course_1" name="course" class="form-select"
+                                                aria-describedby="helpId">
+                                                <option value="all">All Courses</option>
+                                                @foreach ($course as $cs)
+                                                    <option value="{{ $cs->id }}">{{ $cs->code }}</option>
+                                                @endforeach
+                                                <!-- Idagdag ang iba pang mga kurso dito -->
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2 mb-1 d-flex align-items-center justify-content-start">
+                                            <div class="form-check me-2">
+                                                <input class="form-check-input" type="checkbox" id="selectAll5"
+                                                    value="1" onchange="this.value = this.checked ? 1 : 0;">
+                                                <label class="form-check-label" for="all">
+                                                    All
+                                                </label>
+                                            </div>
+                                            <button type="button" class="btn btn-secondary waves-effect waves-light"
+                                                data-bs-toggle="modal" data-bs-target=".bs-example-modal-xl"
+                                                id="viewSubModal">
+                                                <i class="ri-eye-fill"></i>
+                                            </button>
+                                        </div>
+
+
+
+
+                                    </div>
+                                </form>
+
+                                <form action="Assessement">
+                                    <h4 class="card-title"><b>Student Assessment</b></h4>
+                                    <div class="row">
+                                        <div class="col-md-3 mb-3">
+                                            <label for="students">Student Name:</label>
+                                            <select id="studentss_id_individual7" name="id_number" class="form-select"
+                                                aria-describedby="helpId">
+                                                <option value="all">All Student</option>
+                                                @foreach ($Students as $student)
+                                                    <option value="{{ $student->id_number }}">
+                                                        {{ $student->first_name }}
+                                                        {{ $student->middle_name }} {{ $student->last_name }},
+                                                        {{ $student->id_number }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <label for="course" class="form-label">School Year</label>
+                                            <select name="school_year" id="school_year_individual7" class="form-select"
+                                                required>
+                                                <option value="" disabled selected>--Select One--</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-1 mb-3">
+                                            <label for="">Semester</label>
+                                            <input type="text" class="form-control" id="semesterID_view_7"
+                                                placeholder="" aria-describedby="helpId" name="semester">
+                                        </div>
+                                        <div class="col-md-2 mb-3">
+                                            <label for="course">Course:</label>
+                                            <select id="course_7" name="course" class="form-select"
+                                                aria-describedby="helpId">
+                                                <option value="all">All Courses</option>
+                                                @foreach ($course as $cs)
+                                                    <option value="{{ $cs->id }}">{{ $cs->code }}</option>
+                                                @endforeach
+
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2 mb-2">
+                                            <button type="button" class="btn btn-success waves-effect waves-light"
+                                                style="margin-top: 30px; margin-right: 5px;"
+                                                onclick="generateStudentAssessment()">Generate Pdf</button>
                                         </div>
                                     </div>
                                 </form>
                             </div>
-                            {{-- <div class="row">
-                                <div class="col-md-3 mb-3">
-                                    <label for="year">Period:</label>
-                                    <select id="gender" name="gender" class="form-select" aria-describedby="helpId">
-                                        <option value="">Select</option>
-                                        @foreach ($schoolYear as $sy)
-                                            <option value="{{ $sy->id }}">{{ $sy->code }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <label for="year">Department:</label>
-                                    <select id="department_idd" name="department_id" class="form-select"
-                                        aria-describedby="helpId">
-                                        <option value="">Select</option>
-                                        @foreach ($department as $dept)
-                                            <option value="{{ $dept->id }}"
-                                                data-description="{{ $dept->description }}">{{ $dept->code }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <label bel for="year">Code Description</label>
-                                    <input type="text" class="form-control" id="codeDescription" placeholder=""
-                                        aria-describedby="helpId" readonly>
-                                </div>
 
-                            </div> --}}
-                            <div class="card-body">
-                                <h4 class="card-title">Subject List</h4>
-                                <table id="subject-list-section"
-                                    class="table table-striped table-bordered dt-responsive nowrap"
-                                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                    <thead>
-                                        <tr>
-                                            <th>Sections</th>
-                                            <th>Code</th>
-                                            <th>Description</th>
-                                            <th>Instructor</th>
-                                        </tr>
-                                    </thead>
-                                </table>
-                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -529,6 +594,7 @@
     </div>
     <!-- End Page-content -->
 @endsection
+@include('Roles.Super_Administrator.studentReports.viewSub')
 
 @push('scripts')
     <script>
@@ -665,6 +731,23 @@
                 "&year_level_id=" + yearLevel +
                 "&campusID=" + campus +
                 "&selectWithGradesCOE=" + cog;
+        }
+    </script>
+    <script>
+        function generateStudentAssessment() {
+            var student = $('#studentss_id_individual7').val();
+            var semester = $('#semesterID_view_7').val();
+            var schoolYear = $('#school_year_individual7').val();
+            var course = $('#course_7').val();
+
+            var url = "{{ route('superadmin.generate.studentAssessment') }}" +
+                "?studentss_id_individual7=" + student +
+                "&semesterID_view_7=" + semester +
+                "&school_year_individual7=" + schoolYear +
+                "&course_7=" + course;
+
+
+            window.location.href = url;
         }
     </script>
     <script>
@@ -1274,6 +1357,67 @@
                     }
                 }
             }
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            $.ajax({
+                url: '{{ route('superadmin.get.activeYear') }}',
+                type: 'GET',
+                success: function(data) {
+                    let select = $('#school_year_individual2');
+                    select.empty();
+
+                    select.append('<option value="" disabled selected>--Select One--</option>');
+
+                    if (data.activeYears.length > 0) {
+                        $.each(data.activeYears, function(index, schoolYear) {
+                            select.append('<option value="' + schoolYear.id + '">' +
+                                schoolYear.code + '</option>');
+                        });
+                    } else {
+                        select.append('<option value="" disabled>No active school year found</option>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching school years:', error);
+                }
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $.ajax({
+                url: '{{ route('superadmin.get.activeYear') }}',
+                type: 'GET',
+                success: function(data) {
+                    let select = $('#school_year_individual7');
+                    select.empty();
+                    if (data.activeYears.length === 1) {
+                        select.append('<option value="' + data.activeYears[0].id +
+                            '" selected>' + data.activeYears[0].code + '</option>');
+                    } else {
+                        select.append(
+                            '<option value="" disabled selected>--Select One--</option>'
+                        );
+
+                        $.each(data.activeYears, function(index, schoolYear) {
+                            select.append('<option value="' + schoolYear.id + '">' +
+                                schoolYear.code + '</option>');
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching school years:', error);
+                }
+            });
         });
     </script>
 @endpush

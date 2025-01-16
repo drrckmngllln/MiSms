@@ -37,16 +37,7 @@
                              </select>
                          </div>
                      </div>
-                     <div class="form-group">
-                         <label for="course" class="form-label">Course</label>
-                         <select name="course_id" id="edit_course_id_select2" class="form-select id-number"
-                             aria-describedby="helpId" required>
-                             <option value="">Select Course</option>
-                             @foreach ($course as $cs)
-                                 <option value="{{ $cs->id }}">{{ $cs->code }}</option>
-                             @endforeach
-                         </select>
-                     </div>
+
                      <div class="form-group">
                          <label>1st Year</label>
                          <input type="text" class="form-control" name="first_year" id="edit_first_year" required>
@@ -76,7 +67,7 @@
  @push('scripts')
      <script>
          function editOtherFee(id, category, description, campus_id, first_year, second_year, third_year, fourth_year,
-             semester, course_id) {
+             semester) {
              $('#edit_id').val(id);
              $('#edit_description').val(description);
              $('#edit_campus_id').val(campus_id);
@@ -85,17 +76,8 @@
              $('#edit_third_year').val(third_year);
              $('#edit_fourth_year').val(fourth_year);
              $('#edit_semester').val(semester);
-             course_select_edit.val(course_id).trigger('change.select2')
+             //  course_select_edit.val(course_id).trigger('change.select2')
              $('#edit_form').attr('action', location.href + '/' + id);
          }
-     </script>
-     <script>
-         let course_select_edit;
-         $(document).ready(function() {
-             course_select_edit = $('#edit_course_id_select2').select2({
-                 dropdownParent: $('#editOtherFee'),
-                 dropdownAutoWidth: true
-             });
-         });
      </script>
  @endpush

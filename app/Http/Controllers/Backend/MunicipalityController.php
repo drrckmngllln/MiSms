@@ -15,8 +15,10 @@ class MunicipalityController extends Controller
     {
         $region = [
 
-            ["code" => "020000000", "name" => "Cagayan Valley"],
+            ["code" => "020000000", "name" => "Cagayan Valley/Batanes"],
             ["code" => "140000000", "name" => "Cordillera Administrative Region"],
+            ["code" => "025000000", "name" => "Nueva Vizcaya"],
+
         ];
         return response()->json($region);
     }
@@ -148,6 +150,24 @@ class MunicipalityController extends Controller
             //ABRA
             ["code" => "140101000", "name" => "Abra", "regionCode" => "140000000"],
 
+            //Vizcaya 
+            ["code" => "025001000", "name" => "Ambaguio", "regionCode" => "025000000"],
+            ["code" => "025002000", "name" => "Aritao", "regionCode" => "025000000"],
+            ["code" => "025003000", "name" => "Bagabag", "regionCode" => "025000000"],
+            ["code" => "025004000", "name" => "Bambang", "regionCode" => "025000000"],
+            ["code" => "025005000", "name" => "Bayombong", "regionCode" => "025000000"],
+            ["code" => "025006000", "name" => "Diadi", "regionCode" => "025000000"],
+            ["code" => "025007000", "name" => "Dupax Del Norte", "regionCode" => "025000000"],
+            ["code" => "025008000", "name" => "Dupax Del Sur", "regionCode" => "025000000"],
+            ["code" => "025009000", "name" => "Kasibu", "regionCode" => "025000000"],
+            ["code" => "025010000", "name" => "Kayapa", "regionCode" => "025000000"],
+            ["code" => "025011000", "name" => "Quezon", "regionCode" => "025000000"],
+            ["code" => "025012000", "name" => "Santa Fe", "regionCode" => "025000000"],
+            ["code" => "025013000", "name" => "Solano", "regionCode" => "025000000"],
+            ["code" => "025014000", "name" => "Villaverde", "regionCode" => "025000000"],
+            ["code" => "025015000", "name" => "Alfonso Castaneda", "regionCode" => "025000000"]
+
+
 
 
 
@@ -164,10 +184,12 @@ class MunicipalityController extends Controller
         $ifugaoFilePath = storage_path('app/public/ifugaobarangay.json');
         $benguetFilePath = storage_path('app/public/benguetbrgy.json');
         $abramFilePath = storage_path('app/public/Abranbrgy.json');
+        $nuevaVizcaya = storage_path('app/public/nuevaVizcaya.json');
+
 
         if (
             !file_exists($filePath) || !file_exists($isabelaFilePath) || !file_exists($batanesFilePath) || !file_exists($carFilePath) || !file_exists($kalingaFilePath)
-            || !file_exists($ifugaoFilePath) || !file_exists($benguetFilePath) || !file_exists($abramFilePath)
+            || !file_exists($ifugaoFilePath) || !file_exists($benguetFilePath) || !file_exists($abramFilePath) || !file_exists($nuevaVizcaya)
         ) {
             return response()->json(['message' => 'Barangay data files not found'], 404);
         }
@@ -180,7 +202,8 @@ class MunicipalityController extends Controller
         $ifugaoData = json_decode(file_get_contents($ifugaoFilePath), true);
         $benguetData = json_decode(file_get_contents($benguetFilePath), true);
         $abramData = json_decode(file_get_contents($abramFilePath), true);
-        $combinedBarangays = array_merge($barangayData, $isabelaData, $batanesData, $carData, $kalingaData, $ifugaoData, $benguetData, $abramData);
+        $VizcayaData = json_decode(file_get_contents($nuevaVizcaya), true);
+        $combinedBarangays = array_merge($barangayData, $isabelaData, $batanesData, $carData, $kalingaData, $ifugaoData, $benguetData, $abramData, $VizcayaData);
         // dd($carData);
         $regionCode = $request->input('regionCode');
         $municipalityCode = $request->input('municipalityCode');

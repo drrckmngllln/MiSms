@@ -7,6 +7,7 @@ use App\Http\Controllers\Backend\AdmissionController;
 use App\Http\Controllers\Backend\AdmittedStudentsController;
 use App\Http\Controllers\Backend\CampusController;
 use App\Http\Controllers\Backend\CancelEnrollementController;
+use App\Http\Controllers\Backend\CancelRecieptController;
 use App\Http\Controllers\Backend\ClasslistController;
 use App\Http\Controllers\Backend\CourseController;
 use App\Http\Controllers\Backend\CreateAccountController;
@@ -84,6 +85,16 @@ use Spatie\Permission\Contracts\Role;
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+
+Route::post('/student', [StudentInfo::class, 'studentinfo'])->name('student.info');
+Route::post('/student', [StudentInfo::class, 'student'])->name('student.save');
+Route::get('/region', [MunicipalityController::class, 'municipalities'])->name('municipalities.index');
+Route::get('/cities-province', [MunicipalityController::class, 'citiesProvince'])->name('citiesProvince.index');
+Route::get('/barangay', [MunicipalityController::class, 'barangay'])->name('barangay.index');
+Route::get('/get_last_id_number', [CreateAccountController::class, 'getLastIDNumber'])->name('get.LastIdNumber');
+
 //StudentInformation Frontend
 // Route::get('/studentInformation', [StudentInfoController::class, 'studentInformation'])->name('student.information');
 // Route::post('/studentInformation', [StudentInfoController::class, 'saveStudentInfo'])->name('studentSave.info');
@@ -446,6 +457,26 @@ Route::middleware('auth')->group(function () {
 
             //accounting part add other fees
             Route::post('/addotherfees', [FullPackageController::class, 'addOtherFees'])->name('add.otherFeestoStudent');
+
+
+            Route::get('/cancelRecipt', [CancelRecieptController::class, 'cancelRecipt'])->name('cancel.reciept');
+            Route::delete('/cancelReciept/{id}', [CancelRecieptController::class, 'destroy'])->name('cancelReciept.destroy');
+
+            //newBreakdown
+            Route::get('getNewBreakDown/{id_number}', [FeeCollectionController::class, 'getNewBreakDown']);
+            Route::get('/generateDailyCollection', [MasterListController::class, 'generatePDFDailyCollection'])->name('generate.PDFDailyCollection');
+            Route::get('/discountCollection', [MasterListController::class, 'discountCollection'])->name('generate.discountCollection');
+
+            // Route::get('/checkPreviousBalance/{id_number}', [OtherFeesController::class, 'checkPreviousBalance']);
+
+            Route::post('/check-student-balance', [OtherFeesController::class, 'checkBalance'])->name('checkStudentBalance');
+            Route::post('/statusChange', [OtherFeesController::class, 'statusChange'])->name('statusChange');
+            Route::get('/studentSubjectswithgrade', [ReportController::class, 'studentSubjectswithgrade'])->name('studentSubjectswithgrade');
+
+
+            Route::get('/banks', [ReportController::class, 'banks'])->name('generate.ReportCollectionperBank');
+
+            Route::get('/studentAssessment', [ReportController::class, 'studentAssessment'])->name('generate.studentAssessment');
         });
     });
     //registrar side
@@ -572,6 +603,8 @@ Route::middleware('auth')->group(function () {
             Route::resource('studentList', ImportStudentList::class);
 
             Route::get('/fee-summary/latest-or-number', [FullPackageController::class, 'getLatestOrNumber']);
+            Route::get('/studentSubjectswithgrade', [ReportController::class, 'studentSubjectswithgrade'])->name('studentSubjectswithgrade');
+            Route::get('/studentAssessment', [ReportController::class, 'studentAssessment'])->name('generate.studentAssessment');
         });
     });
     // finance
@@ -604,6 +637,7 @@ Route::middleware('auth')->group(function () {
 
 
             Route::get('/fee-summary/latest-or-number', [FullPackageController::class, 'getLatestOrNumber']);
+            Route::get('/generateDailyCollection', [MasterListController::class, 'generatePDFDailyCollection'])->name('generate.PDFDailyCollection');
         });
     });
     //Super Admin for finance
@@ -629,11 +663,13 @@ Route::middleware('auth')->group(function () {
             Route::post('approvalHighSchool/{id}', [HighSchoolController::class, 'changeStatus'])->name('studentappHS.changeStatusHighSchool');
             Route::get('/getCurriculumHighSchool', [HighSchoolController::class, 'getCurriculumHS'])->name('get.CurrculumCoursesHS');
             Route::post('student_subject_highSchhol', [HighSchoolController::class, 'studentSubHs'])->name('student.subjectSaveHs');
+            Route::get('/generateDailyCollection', [MasterListController::class, 'generatePDFDailyCollection'])->name('generate.PDFDailyCollection');
 
             //accounting for HS
             Route::post('hs/fees', [HighSchoolController::class, 'fees'])->name('get.accountingHS');
             Route::get('/courseIDwithDepartment', [DepartmentController::class, 'getDepartmentByCourse'])->name('courseId.department');
             Route::delete('/remove-lab-id/{id}', [LaboratoryController::class, 'removeLabId'])->name('remove.lab.id');
+            Route::get('/fee-summary/latest-or-number', [FullPackageController::class, 'getLatestOrNumber']);
         });
     });
     //evaluator
@@ -823,6 +859,14 @@ Route::middleware('auth')->group(function () {
             Route::get('/generate-excel', [ReportController::class, 'generateExcel'])->name('generate.excel');
             Route::get('/generate-excel-masterlist', [MasterListController::class, 'generateExcelMasterList'])->name('generate.excelMaterlist');
             Route::get('/generate-pdf-finance', [MasterListController::class, 'generatePDFFinancedailyreport'])->name('generate.PDFFinancedailyreport');
+            Route::get('/generateDailyCollection', [MasterListController::class, 'generatePDFDailyCollection'])->name('generate.PDFDailyCollection');
+            Route::get('/generateDailyCollectionFees', [MasterListController::class, 'generatePDFDailyCollectionFees'])->name('generate.PDFDailyCollectionFees');
+            Route::get('/generateReportCollectionperCampus', [MasterListController::class, 'generateReportCollectionperCampus'])->name('generate.ReportCollectionperCampus');
+            Route::get('/generateReportCollectionperCategory', [MasterListController::class, 'generateReportCollectionperCategory'])->name('generate.ReportCollectionperCategory');
+
+
+
+
 
             // Route::get('/preview-excel', ReportController::class, 'previewExcel')->name('preview.excel');
             //get how may courses

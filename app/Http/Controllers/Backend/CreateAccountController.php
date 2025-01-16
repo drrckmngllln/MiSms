@@ -138,19 +138,6 @@ class CreateAccountController extends Controller
         // dd($request->all());
         // $request->validate(CreateAccount::$rules);
         //handle duplicate entry
-        $HandleName = CreateAccount::where('first_name', $request->first_name)
-            ->where('middle_name', $request->middle_name)
-            ->where('last_name', $request->last_name)
-            ->get();
-        $HandleIDNumber = CreateAccount::where('id_number', $request->id_number)->get();
-
-        if (!$HandleName->isEmpty()) {
-            $request->session()->flash('error', 'Name Already Exists or ID Number');
-            return redirect()->back()->withInput();
-        } else if (!$HandleIDNumber->isEmpty()) {
-            $request->session()->flash('error', 'ID Number Exists');
-            return redirect()->back()->withInput();
-        }
         $createaccount = new CreateAccount([
             ...$request->only([
                 'id_number',
@@ -193,6 +180,7 @@ class CreateAccountController extends Controller
                 'houseno',
                 'regioncode',
                 'regionname',
+                // 'otherLives'
             ])
         ]);
         $createaccount->save();
@@ -782,6 +770,13 @@ class CreateAccountController extends Controller
             $total += $fee['computation'];
         }
 
+        $latestSemester = studentAssesment::where('id_number', $request->id_number)->max('semester');
+        $studentAssessment = studentAssesment::where('id_number', $request->id_number)
+            ->where('semester', $latestSemester)
+            ->orderBy('semester', 'desc')
+            ->first();
+
+
         return dataTables()->of($all_fees)
             ->with([
                 'total' => $total,
@@ -790,6 +785,8 @@ class CreateAccountController extends Controller
                 'total_tuition_fees' => $lecture_units * $tuition_rate_amount,
                 'total_laboratory_fees' => $total_laboratory_fees,
                 'total_fullpackage_fees' => $total_fullpackage_fees,
+                'previousAssessment' => $studentAssessment ? $studentAssessment->total_assessment : 0,
+
                 // 'Lab_id',
             ])
             ->make(true);
@@ -854,6 +851,8 @@ class CreateAccountController extends Controller
                     'campus_id',
                     'totalAss',
                     'or_number',
+                    'department_id',
+                    'previousBalance',
 
                 ]),
                 // dito is yung mga subject lang na kailangan natin ilagay

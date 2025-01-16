@@ -27,7 +27,9 @@ class DiscountDataTable extends DataTable
                 $btncontainer = '<div class="d-flex justify-content-center">';
 
                 $editbtn = '<a href="#" data-bs-toggle="modal" data-bs-target="#editMiscfee" onclick="editDiscount
-                (' . $query->id . ', \'' . $query->code . '\',\'' . $query->discount_target . '\',\'' . $query->description . '\',\'' . $query->discount_percentage . '\')">';
+                (' . $query->id . ', \'' . $query->code . '\',\'' . $query->discount_target . '\',
+                \'' . $query->description . '\',\'' . $query->discount_percentage . '\', \'' . $query->discount_type . '\',
+               \'' . $query->discount_code . '\')">';
                 $editbtn .= '<button type="button" class="btn btn-primary waves-effect waves-light">';
                 $editbtn .= '<i class="ri-edit-2-fill"></i>';
                 $editbtn .= '</button></a>';
@@ -85,6 +87,8 @@ class DiscountDataTable extends DataTable
             Column::make('code'),
             Column::make('discount_target'),
             Column::make('description')->title('Remarks'),
+            Column::make('discount_type'),
+            Column::make('discount_code'),
             Column::make('discount_percentage'),
             Column::computed('action')
                 ->exportable(false)

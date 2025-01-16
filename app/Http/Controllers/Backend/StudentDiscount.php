@@ -38,11 +38,13 @@ class StudentDiscount extends Controller
     {
 
         if (request()->ajax()) {
-            return datatables()->of(Discount::select('id', 'code', 'discount_target', 'description', 'discount_percentage')->get())
+            return datatables()->of(Discount::select('id', 'code', 'discount_target', 'description', 'discount_percentage', 'discount_type', 'discount_code')->get())
                 ->addColumn('action', function ($query) {
                     // Create button HTML for DataTable action column
                     // $inputField = '<input type="text" class="form-control" id="or_number_id' . $query->id . '" placeholder="OR Number">';
-                    $addbtn = '<button type="button" class="btn btn-success" onclick="saveDiscount(' . $query->id . ',\'' . $query->code . '\', \'' . $query->discount_target . '\', \'' . $query->description . '\', \'' . $query->discount_percentage . '\')">+</button>';
+                    $addbtn = '<button type="button" class="btn btn-success" onclick="saveDiscount(' . $query->id . ',\'' . $query->code . '\', \'' . $query->discount_target . '\', \'' . $query->description . '\', 
+                    \'' . $query->discount_percentage . '\',\'' . $query->discount_type . '\',
+                    \'' . $query->discount_code . '\')">+</button>';
                     return $addbtn;
                 })
                 ->rawColumns(['action'])
@@ -52,6 +54,7 @@ class StudentDiscount extends Controller
     }
     public function saveStudentDiscount(Request $request)
     {
+
         DiscountHelper::applyDiscount($request);
         return response(['status' => 'success', 'message' => 'Discount saved successfully']);
     }

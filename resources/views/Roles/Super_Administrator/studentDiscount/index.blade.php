@@ -62,7 +62,7 @@
                                 <thead>
                                     <tr>
                                         <th>ID Number</th>
-                                        <th>Code</th>
+                                        <th>Remarks</th>
                                         <th>Discount Target</th>
                                         <th>Remarks</th>
                                         <th>School Year</th>

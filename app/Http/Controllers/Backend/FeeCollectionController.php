@@ -31,6 +31,7 @@ class FeeCollectionController extends Controller
         $user = Auth::user();
         $role = $user->roles->first()->name;
         $name = $user->name;
+        $id = $user->id;
 
         $otherFees = OtherFee::where('semester', $semester)->get();
         $fees = collect();
@@ -44,7 +45,7 @@ class FeeCollectionController extends Controller
             ]);
         }
         // dd($name);
-        return view('Roles.Super_Administrator.fee_collection.index', compact('school_year', 'name', 'role', 'fees'));
+        return view('Roles.Super_Administrator.fee_collection.index', compact('school_year', 'name', 'role', 'fees', 'id'));
     }
 
     /**
@@ -131,7 +132,11 @@ class FeeCollectionController extends Controller
                     \'' . $query->first_name . '\',\'' . $query->middle_name . '\',\'' . $courseCode . '\', 
                     \'' . $yearLevel . '\', \'' . $studentSemester . '\',\'' . $studentDownpayment . '\', 
                     \'' . $studentPrelims . '\', \'' . $studentMidterms . '\',\'' . $studentSemiFinals . '\',
-                    \'' . $studentFinals . '\',\'' . $studentTotal . '\',\'' . $TotalAss . '\', \'' . $query->campus_id . '\')">+</button>';
+                    \'' . $studentFinals . '\',\'' . $studentTotal . '\',\'' . $TotalAss . '\', \'' . $query->campus_id . '\', \'' . $query->student_subject?->school_year . '\',
+                        \'' . $query->student_assestment?->sdownpayment . '\', \'' . $query->student_assestment?->sprelims . '\',\'' . $query->student_assestment?->smidterms . '\',
+                     \'' . $query->student_assestment?->ssemi_finals . '\',     \'' . $query->student_assestment?->sfinals . '\' ,\'' . $query->student_assestment?->stotal_assessment . '\',
+                     \'' . $query->student_subject?->department_id . '\' , \'' . $query->student_subject?->campus_id . '\',\'' . $query->student_subject?->course_id . '\'  
+                    )">+</button>';
                     return $addbtn;
                 })
                 ->addColumn('course', function ($query) {
@@ -205,5 +210,29 @@ class FeeCollectionController extends Controller
                 ->addIndexColumn()
                 ->make(true);
         }
+    }
+    public function getNewBreakDown(Request $request, $id_number)
+    {
+        $latestSemester = studentAssesment::where('id_number', $id_number)
+            ->max('semester');
+
+        $data = studentAssesment::select(
+            'downpayment',
+            'prelims',
+            'midterms',
+            'semi_finals',
+            'finals',
+            'total_assessment'
+        )
+            ->where('id_number', $id_number)
+            ->where('semester', $latestSemester)
+
+            ->distinct()
+
+            ->get();
+
+        return datatables()->of($data)
+            ->addIndexColumn()
+            ->make(true);
     }
 }

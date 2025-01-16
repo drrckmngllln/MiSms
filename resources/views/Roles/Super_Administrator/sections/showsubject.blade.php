@@ -87,13 +87,17 @@
 
                                             <label for="course" class="form-label">Curriculum</label>
                                             <select name="curriculum_id" id="curriculum_id"
-                                                class="form-select id-number" aria-describedby="helpId" required>
+                                                class="form-select id-number" aria-describedby="helpId" required
+                                                onchange="confirmCurriculumSelection(this)">
                                                 <option value="">Select Curriculum</option>
                                                 @foreach ($curriculums as $curriculum)
-                                                    <option value="{{ $curriculum->id }}">{{ $curriculum->code }}
+                                                    <option value="{{ $curriculum->id }}"
+                                                        data-code="{{ $curriculum->code }}">{{ $curriculum->code }}
                                                     </option>
                                                 @endforeach
                                             </select>
+
+
 
 
                                         </div>
@@ -202,15 +206,36 @@
                 $('#campus_id_id').focus();
                 return;
             }
+
+            const selectedOption = event.target.options[event.target.selectedIndex];
             const semester_id = event.target.value;
+            const semesterText = selectedOption.text; // Kunin ang text ng napiling semester
             const curriculum_id = $("#curriculum_id").val();
             const view_year_level = $("#view_year_level").val();
             const section_code = $('#section_subject_id').val();
             const course_id = $('#view_course_id').val();
-            // const section_id = $('#section_id_code').val();
             const school_year = $('#school_year_id_show_subject').val();
             const section_id = $('#section_id_show_subject').val();
             const campus_id = $('#campus_id_id').val();
+
+            if (!semester_id) {
+                return; // Walang napiling semester
+            }
+
+            const confirmation = await Swal.fire({
+                title: 'Are you sure?',
+                text: `Do you want to save the semester: ${semesterText}?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No',
+            });
+
+            if (!confirmation.isConfirmed) {
+
+                $(this).val('');
+                return;
+            }
 
 
             await new Promise((resolve, reject) => {
@@ -224,6 +249,7 @@
                     school_year,
                     campus_id,
                 };
+
                 $.ajax({
                     url: '{{ route('superadmin.save.sectionSubject') }}',
                     type: 'POST',
@@ -232,26 +258,25 @@
                         resolve();
                     },
                     error: function(xhr, status, error) {
-                        // Handle the error
-                    }
+                        console.error('Error:', error);
+                        reject();
+                    },
                 });
             });
 
             const url = location.origin + '/superadmin/getSectionSubject/' + section_code + '/' +
-                view_year_level +
-                '/' + semester_id +
-                '/' + school_year;
+                view_year_level + '/' + semester_id + '/' + school_year;
+
             const requestData = {
                 section_code: section_code,
-                section_id: section_id
-
+                section_id: section_id,
             };
 
-            // Destroy any existing DataTable instance
+
             $("#section-curruculum").DataTable().destroy();
 
-            // Initialize DataTable
-            var dt = $("#section-curruculum").DataTable({
+
+            $("#section-curruculum").DataTable({
                 processing: true,
                 serverSide: true,
                 responsive: true,
@@ -311,7 +336,6 @@
                         data: 'action',
                         name: 'action'
                     },
-
                 ],
                 drawCallback: () => {
                     $(".OpenModal").click((event) => {
@@ -330,15 +354,14 @@
                         OpenModal4();
                         event.stopPropagation();
                     });
-                }
+                },
             });
 
-            // Delete row event handler
+
             $('#section-curruculum').on('click', '.delete-row', function() {
                 var tr = $(this).closest('tr');
                 dt.row(tr).remove().draw();
             });
-
         });
     </script>
     <script>
@@ -463,5 +486,27 @@
                 dropdownAutoWidth: true
             });
         });
+    </script>
+    <script>
+        function confirmCurriculumSelection(selectElement) {
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            const curriculumCode = selectedOption.getAttribute('data-code');
+
+            if (curriculumCode) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: `Is this the curriculum of this course? (${curriculumCode}), check carefully before select semester`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'No'
+                }).then((result) => {
+                    if (!result.isConfirmed) {
+
+                        selectElement.value = '';
+                    }
+                });
+            }
+        }
     </script>
 @endpush

@@ -39,7 +39,12 @@ class DiscountController extends Controller
 
         $discount = new Discount([
             ...$request->only([
-                'code', 'discount_target', 'description', 'discount_percentage'
+                'code',
+                'discount_target',
+                'description',
+                'discount_percentage',
+                'discount_type',
+                'discount_code'
             ])
         ]);
 
@@ -74,7 +79,7 @@ class DiscountController extends Controller
         $request->validate(Discount::$rules);
         $discount = Discount::findOrFail($id);
         $discount->update(
-            $request->only(['code', 'discount_target', 'description', 'discount_percentage'])
+            $request->only(['code', 'discount_target', 'description', 'discount_percentage', 'discount_type', 'discount_code'])
         );
         $discount->save();
         return redirect()->back()->with('success', ' Updated successfully!');

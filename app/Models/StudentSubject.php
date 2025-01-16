@@ -71,7 +71,7 @@ class StudentSubject extends Model
     }
     public function laboratory()
     {
-        return $this->belongsTo(laboratoryModel::class, 'lab_id');
+        return $this->belongsTo(laboratoryModel::class, 'lab_id', 'id');
     }
     public function section()
     {
@@ -144,4 +144,9 @@ class StudentSubject extends Model
     {
         return $this->belongsTo(FullPackagefees::class, 'campus_id', 'campus_id');
     }
+    // public function labss()
+    // {
+    //     return $this->hasMany(laboratoryModel::class, 'semester', 'semester')
+    //         ->where('campus_id', $this->campus_id);
+    // }
 }

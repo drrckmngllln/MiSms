@@ -156,8 +156,8 @@
         var curriculumSubjectDataTable;
 
         function addSubject2(subject_id, code, descriptive_tittle, total_units, lecture_units, lab_units, pre_requisite,
-            total_hrs_per_week, time, day, room, lab_id, instructor_id) {
-            console.log(subject_id);
+            total_hrs_per_week, time, day, room, lab_id, instructor_id, id) {
+            // console.log(id);
             const dt = $("#section-subject").DataTable();
 
             // const timeDuplicate = dt.rows().data().toArray().some(row => row.time === time && row.day === day);

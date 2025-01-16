@@ -35,10 +35,12 @@
                         <thead>
                             <tr>
                                 <th>Section ID</th>
-                                <th>Code</th>
+                                <th>Reason/Remarks</th>
                                 <th>Discount Target</th>
-                                <th>Remarks</th>
+                                <th>Default Selection</th>
                                 <th>Discount Percentage</th>
+                                <th>Discount Type</th>
+                                <th>Discount Code</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -83,7 +85,16 @@
                 }, {
                     data: 'discount_percentage',
                     name: 'discount_percentage',
-                }, {
+                },
+                {
+                    data: 'discount_type',
+                    name: 'discount_type',
+                },
+                {
+                    data: 'discount_code',
+                    name: 'discount_code',
+                },
+                {
                     data: 'action',
                     name: 'action',
 
@@ -92,9 +103,8 @@
         });
     </script>
     <script>
-        function saveDiscount(id, code, discount_target, description, discount_percentage) {
-            console.log("testing");
-            // console.log(school_year);
+        function saveDiscount(id, code, discount_target, description, discount_percentage, discount_type, discount_code) {
+
             const urlParams = new URLSearchParams(window.location.search);
             const idNumber = urlParams.get('id');
             const schoolYear = $('#student_school_year').val();
@@ -122,6 +132,10 @@
                     school_year: school_year,
                     or_number: or_number,
                     semester: semester,
+                    discount_type: discount_type,
+                    discount_code: discount_code,
+                    // department_id: departmentValue,
+                    _token: "{{ csrf_token() }}"
                 },
                 success: function(response) {
                     if (response.status === 'success') {
